@@ -1,10 +1,10 @@
-#include "treemodel.h"
+#include "treetotablemodel.h"
 #include "treeitem.h"
 
 #include <QFile>
 #include <QStringList>
 
-TreeModel::TreeModel()
+TreeToTableModel::TreeToTableModel()
     : QAbstractItemModel(nullptr)
 {
     rootItem = new TreeItem({tr("Title"), tr("Summary")});
@@ -13,19 +13,19 @@ TreeModel::TreeModel()
     setupModelData(QString(file.readAll()).split('\n'), rootItem);
 }
 
-TreeModel::~TreeModel()
+TreeToTableModel::~TreeToTableModel()
 {
     delete rootItem;
 }
 
-int TreeModel::columnCount(const QModelIndex &parent) const
+int TreeToTableModel::columnCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
     return rootItem->columnCount();
 }
 
-QVariant TreeModel::data(const QModelIndex &index, int role) const
+QVariant TreeToTableModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -38,7 +38,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     return item->data(index.column());
 }
 
-Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags TreeToTableModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::NoItemFlags;
@@ -46,7 +46,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index);
 }
 
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
+QVariant TreeToTableModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -55,7 +55,7 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex TreeToTableModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (!hasIndex(row, column, parent))
         return QModelIndex();
@@ -73,7 +73,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
     return QModelIndex();
 }
 
-QModelIndex TreeModel::parent(const QModelIndex &index) const
+QModelIndex TreeToTableModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
         return QModelIndex();
@@ -87,7 +87,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     return createIndex(parentItem->row(), 0, parentItem);
 }
 
-int TreeModel::rowCount(const QModelIndex &parent) const
+int TreeToTableModel::rowCount(const QModelIndex &parent) const
 {
     TreeItem *parentItem;
     if (parent.column() > 0)
@@ -101,7 +101,7 @@ int TreeModel::rowCount(const QModelIndex &parent) const
     return parentItem->childCount();
 }
 
-void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
+void TreeToTableModel::setupModelData(const QStringList &lines, TreeItem *parent)
 {
     QVector<TreeItem*> parents;
     QVector<int> indentations;
