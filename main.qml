@@ -36,7 +36,7 @@ Window {
 
                     let text = ""
                     if (_q_TreeView_HasChildren)
-                        text += _q_TreeView_ItemExpanded ? "↓" : "→"
+                        text += _q_TreeView_ItemExpanded ? "⬇" : "⮕"
 
                     text += "(icon) " + display
                 }
