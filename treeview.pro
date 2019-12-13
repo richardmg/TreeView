@@ -6,7 +6,8 @@ RESOURCES += main.qml default.txt
 SOURCES += main.cpp \
     treeitem.cpp \
     treemodel.cpp \
-    treetotablemodel.cpp
+    treetotablemodel.cpp \
+    qquicktreemodeladaptor.cpp
 
 OTHER_FILES += \
     main.qml
@@ -14,4 +15,5 @@ OTHER_FILES += \
 HEADERS += \
     treeitem.h \
     treemodel.h \
-    treetotablemodel.h
+    treetotablemodel.h \
+    qquicktreemodeladaptor_p.h
