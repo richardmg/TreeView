@@ -42,7 +42,7 @@ Window {
                             text: {
                                 if (_q_TreeView_HasChildren)
                                     var text = _q_TreeView_ItemExpanded ? "⬇" : "⮕"
-                                text += "(icon) " + display
+                                text += display
                             }
                         }
 
