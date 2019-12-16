@@ -178,7 +178,7 @@ int QQuickTreeModelAdaptor1::rowCount(const QModelIndex &) const
 
 int QQuickTreeModelAdaptor1::columnCount(const QModelIndex &) const
 {
-    return 1;
+    return 3;
 }
 
 QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
