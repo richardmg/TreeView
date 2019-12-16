@@ -29,27 +29,27 @@ Window {
             model: modelAdaptor
             columnSpacing: root.margins
 
-            function isExpanded(index)
+            function isRowExpanded(row)
             {
-                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
+                var modelIndex = modelAdaptor.mapRowToModelIndex(row)
                 return modelAdaptor.isExpanded(modelIndex);
             }
 
-            function setExpanded(index, expanded)
+            function setRowExpanded(row, expanded)
             {
-                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
+                var modelIndex = modelAdaptor.mapRowToModelIndex(row)
                 if (expanded)
                     modelAdaptor.expand(modelIndex)
                 else
                     modelAdaptor.collapse(modelIndex)
             }
 
-            function toggleExpanded(index)
+            function toggleRowExpanded(row)
             {
-                setExpanded(index, !isExpanded(index))
+                setRowExpanded(row, !isRowExpanded(row))
             }
 
-            function depthForIndex(index)
+            function depthForRow(row)
             {
 
             }
@@ -73,7 +73,7 @@ Window {
                         }
 
                         TapHandler {
-                            onTapped: treeView.toggleExpanded(index)
+                            onTapped: treeView.toggleRowExpanded(row)
                         }
                     }
                 }
