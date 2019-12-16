@@ -11,7 +11,7 @@ public:
     ~QQuickTreeViewPrivate() override;
     Q_DECLARE_PUBLIC(QQuickTreeView)
 
-    QQuickTreeModelAdaptor1 m_adaptor;
+    QQuickTreeModelAdaptor1 m_proxyModel;
 };
 
 QQuickTreeViewPrivate::~QQuickTreeViewPrivate()
@@ -21,7 +21,7 @@ QQuickTreeViewPrivate::~QQuickTreeViewPrivate()
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
     : QQuickTableView(*(new QQuickTreeViewPrivate), parent)
 {
-    const auto qaim = static_cast<QAbstractItemModel *>(&d_func()->m_adaptor);
+    const auto qaim = static_cast<QAbstractItemModel *>(&d_func()->m_proxyModel);
     const auto model = QVariant::fromValue(qaim);
     QQuickTableView::setModel(model);
 }
@@ -39,7 +39,7 @@ void QQuickTreeView::setModel(const QVariant &newModel)
         effectiveModelVariant = effectiveModelVariant.value<QJSValue>().toVariant();
 
     if (effectiveModelVariant.isNull()) {
-        d->m_adaptor.setModel(nullptr);
+        d->m_proxyModel.setModel(nullptr);
         return;
     }
 
@@ -49,37 +49,37 @@ void QQuickTreeView::setModel(const QVariant &newModel)
         return;
     }
 
-    d->m_adaptor.setModel(qaim);
+    d->m_proxyModel.setModel(qaim);
 }
 
 bool QQuickTreeView::isExpanded(int row) const
 {
-    return d_func()->m_adaptor.isExpanded(row);
+    return d_func()->m_proxyModel.isExpanded(row);
 }
 
 bool QQuickTreeView::hasChildren(int row) const
 {
-    return d_func()->m_adaptor.hasChildren(row);
+    return d_func()->m_proxyModel.hasChildren(row);
 }
 
 bool QQuickTreeView::hasSiblings(int row) const
 {
-    return d_func()->m_adaptor.hasSiblings(row);
+    return d_func()->m_proxyModel.hasSiblings(row);
 }
 
 int QQuickTreeView::depth(int row) const
 {
-    return d_func()->m_adaptor.depthAtRow(row);
+    return d_func()->m_proxyModel.depthAtRow(row);
 }
 
 void QQuickTreeView::expand(int row)
 {
-    d_func()->m_adaptor.expandRow(row);
+    d_func()->m_proxyModel.expandRow(row);
 }
 
 void QQuickTreeView::collapse(int row)
 {
-    d_func()->m_adaptor.collapseRow(row);
+    d_func()->m_proxyModel.collapseRow(row);
 }
 
 void QQuickTreeView::toggleExpanded(int row)
