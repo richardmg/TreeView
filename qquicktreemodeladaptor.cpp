@@ -186,21 +186,28 @@ QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
     if (!m_model)
         return QVariant();
 
-    const QModelIndex &modelIndex = mapToModel(index);
+    if (index.column() == m_column) {
+        const QModelIndex &modelIndex = mapToModel(index);
 
-    switch (role) {
-    case DepthRole:
-        return m_items.at(index.row()).depth;
-    case ExpandedRole:
-        return isExpanded(index.row());
-    case HasChildrenRole:
-        return !(modelIndex.flags() & Qt::ItemNeverHasChildren) && m_model->hasChildren(modelIndex);
-    case HasSiblingRole:
-        return modelIndex.row() != m_model->rowCount(modelIndex.parent()) - 1;
-    case ModelIndexRole:
-        return modelIndex;
-    default:
-        return m_model->data(modelIndex, role);
+        switch (role) {
+        case DepthRole:
+            return m_items.at(index.row()).depth;
+        case ExpandedRole:
+            return isExpanded(index.row());
+        case HasChildrenRole:
+            return !(modelIndex.flags() & Qt::ItemNeverHasChildren) && m_model->hasChildren(modelIndex);
+        case HasSiblingRole:
+            return modelIndex.row() != m_model->rowCount(modelIndex.parent()) - 1;
+        case ModelIndexRole:
+            return modelIndex;
+        default:
+            return m_model->data(modelIndex, role);
+        }
+    } else if (m_model->hasIndex(index.row(), index.column())) {
+        QModelIndex sourceModelIndex = m_model->index(index.row(), index.column());
+        return m_model->data(sourceModelIndex, role);
+    } else {
+        return QVariant();
     }
 }
 
