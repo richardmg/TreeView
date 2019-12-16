@@ -48,7 +48,7 @@ Window {
                 setRowExpanded(row, !isRowExpanded(row))
             }
 
-            function depthAtRow(row)
+            function depth(row)
             {
                 return modelAdaptor.depthAtRow(row)
             }
@@ -73,7 +73,7 @@ Window {
 
                         Text {
                             id: text
-                            x: treeView.depthAtRow(row) * 20
+                            x: treeView.depth(row) * 20
                             text: {
                                 var text = "";
                                 if (treeView.hasChildren(row))
