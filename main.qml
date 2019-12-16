@@ -22,7 +22,7 @@ Window {
         anchors.margins: 10
         color: "lightgray"
 
-        TableView {
+        TreeView {
             id: treeView
             anchors.fill: parent
             anchors.margins: root.margins

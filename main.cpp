@@ -5,12 +5,14 @@
 
 #include "treemodel.h"
 #include "qquicktreemodeladaptor_p.h"
+#include "qquicktreeview.h"
 
 int main(int argc, char **argv){
     QGuiApplication app(argc, argv);
 
     qmlRegisterType<TreeModel>("TreeModel", 1, 0, "TreeModel");
     qmlRegisterType<QQuickTreeModelAdaptor1>("TreeModel", 1, 0, "TreeModelAdaptor");
+    qmlRegisterType<QQuickTreeView>("TreeModel", 1, 0, "TreeView");
 
     QQmlApplicationEngine engine;
 
