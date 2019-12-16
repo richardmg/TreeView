@@ -23,10 +23,36 @@ Window {
         color: "lightgray"
 
         TableView {
+            id: treeView
             anchors.fill: parent
             anchors.margins: root.margins
             model: modelAdaptor
             columnSpacing: root.margins
+
+            function isExpanded(index)
+            {
+                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
+                return modelAdaptor.isExpanded(modelIndex);
+            }
+
+            function setExpanded(index, expanded)
+            {
+                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
+                if (expanded)
+                    modelAdaptor.expand(modelIndex)
+                else
+                    modelAdaptor.collapse(modelIndex)
+            }
+
+            function toggleExpanded(index)
+            {
+                setExpanded(index, !isExpanded(index))
+            }
+
+            function depthForIndex(index)
+            {
+
+            }
 
             delegate: DelegateChooser {
                 DelegateChoice {
@@ -47,13 +73,7 @@ Window {
                         }
 
                         TapHandler {
-                            onTapped: {
-                                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
-                                if (modelAdaptor.isExpanded(modelIndex))
-                                    modelAdaptor.collapse(modelIndex)
-                                else
-                                    modelAdaptor.expand(modelIndex)
-                            }
+                            onTapped: treeView.toggleExpanded(index)
                         }
                     }
                 }
