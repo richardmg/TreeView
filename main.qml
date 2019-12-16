@@ -35,17 +35,17 @@ Window {
 
                         Text {
                             id: text
-                            x: treeView.depth(row) * 20
+                            x: treeView.depth(index) * 20
                             text: {
                                 var text = "";
-                                if (treeView.hasChildren(row))
-                                    text += treeView.isExpanded(row) ? "⬇" : "⮕"
+                                if (treeView.hasChildren(index))
+                                    text += treeView.isExpanded(index) ? "⬇" : "⮕"
                                 text += display
                             }
                         }
 
                         TapHandler {
-                            onTapped: treeView.toggleExpanded(row)
+                            onTapped: treeView.toggleExpanded(index)
                         }
                     }
                 }

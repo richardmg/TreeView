@@ -21,6 +21,9 @@ QQuickTreeViewPrivate::~QQuickTreeViewPrivate()
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
     : QQuickTableView(*(new QQuickTreeViewPrivate), parent)
 {
+    const auto qaim = static_cast<QAbstractItemModel *>(&d_func()->m_adaptor);
+    const auto model = QVariant::fromValue(qaim);
+    QQuickTableView::setModel(model);
 }
 
 QQuickTreeView::~QQuickTreeView()
@@ -29,13 +32,14 @@ QQuickTreeView::~QQuickTreeView()
 
 void QQuickTreeView::setModel(const QVariant &newModel)
 {
+    Q_D(QQuickTreeView);
+
     QVariant effectiveModelVariant = newModel;
     if (effectiveModelVariant.userType() == qMetaTypeId<QJSValue>())
         effectiveModelVariant = effectiveModelVariant.value<QJSValue>().toVariant();
 
     if (effectiveModelVariant.isNull()) {
-        d_func()->m_adaptor.setModel(nullptr);
-        QQuickTableView::setModel(QVariant());
+        d->m_adaptor.setModel(nullptr);
         return;
     }
 
@@ -45,8 +49,7 @@ void QQuickTreeView::setModel(const QVariant &newModel)
         return;
     }
 
-    d_func()->m_adaptor.setModel(qaim);
-    QQuickTableView::setModel(newModel);
+    d->m_adaptor.setModel(qaim);
 }
 
 bool QQuickTreeView::isExpanded(int row) const
