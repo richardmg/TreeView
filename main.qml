@@ -43,6 +43,7 @@ Window {
             }
 
             MouseArea {
+                // Use pointer handlers
                 anchors.fill: parent
                 onClicked: {
                     var modelIndex = modelAdaptor.mapRowToModelIndex(index)

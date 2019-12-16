@@ -51,9 +51,8 @@ QT_BEGIN_NAMESPACE
 #   define ASSERT_CONSISTENCY qt_noop
 #endif
 
-QQuickTreeModelAdaptor1::QQuickTreeModelAdaptor1(QObject *parent) :
-    QAbstractListModel(parent), m_model(0), m_lastItemIndex(0),
-    m_visibleRowsMoved(false), m_signalAggregatorStack(0)
+QQuickTreeModelAdaptor1::QQuickTreeModelAdaptor1(QObject *parent)
+    : QAbstractItemModel(parent)
 {
 }
 
@@ -93,7 +92,7 @@ void QQuickTreeModelAdaptor1::setModel(QAbstractItemModel *arg)
           SLOT(modelRowsAboutToBeMoved(const QModelIndex&, int, int, const QModelIndex&, int)) },
         { SIGNAL(rowsMoved(const QModelIndex&, int, int, const QModelIndex&, int)),
           SLOT(modelRowsMoved(const QModelIndex&, int, int, const QModelIndex&, int)) },
-        { 0, 0 }
+        { nullptr, nullptr }
     };
 
     if (m_model != arg) {
@@ -147,6 +146,17 @@ void QQuickTreeModelAdaptor1::resetRootIndex()
     setRootIndex(QModelIndex());
 }
 
+QModelIndex QQuickTreeModelAdaptor1::index(int row, int column, const QModelIndex &parent) const
+{
+    return hasIndex(row, column, parent) ? createIndex(row, column) : QModelIndex();
+}
+
+QModelIndex QQuickTreeModelAdaptor1::parent(const QModelIndex &child) const
+{
+    Q_UNUSED(child)
+    return QModelIndex();
+}
+
 QHash<int, QByteArray> QQuickTreeModelAdaptor1::roleNames() const
 {
     if (!m_model)
@@ -164,6 +174,11 @@ QHash<int, QByteArray> QQuickTreeModelAdaptor1::roleNames() const
 int QQuickTreeModelAdaptor1::rowCount(const QModelIndex &) const
 {
     return m_items.count();
+}
+
+int QQuickTreeModelAdaptor1::columnCount(const QModelIndex &) const
+{
+    return 1;
 }
 
 QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
@@ -460,7 +475,7 @@ void QQuickTreeModelAdaptor1::expandRow(int n)
     item.expanded = true;
     m_expandedItems.insert(item.index);
     QVector<int> changedRole(1, ExpandedRole);
-    emit dataChanged(index(n), index(n), changedRole);
+    emit dataChanged(index(n, m_column), index(n, m_column), changedRole);
 
     m_itemsToExpand.append(&item);
     expandPendingRows();
@@ -497,7 +512,7 @@ void QQuickTreeModelAdaptor1::collapseRow(int n)
     item.expanded = false;
     m_expandedItems.remove(item.index);
     QVector<int> changedRole(1, ExpandedRole);
-    queueDataChanged(index(n), index(n), changedRole);
+    queueDataChanged(index(n, m_column), index(n, m_column), changedRole);
     int childrenCount = m_model->rowCount(item.index);
     if ((item.index.flags() & Qt::ItemNeverHasChildren) || !m_model->hasChildren(item.index) || childrenCount == 0)
         return;
@@ -587,7 +602,7 @@ void QQuickTreeModelAdaptor1::modelDataChanged(const QModelIndex &topLeft, const
                 break;
             ++bottomIndex;
         }
-        emit dataChanged(index(topIndex), index(bottomIndex), roles);
+        emit dataChanged(index(topIndex, m_column), index(bottomIndex, m_column), roles);
 
         i += bottomIndex - topIndex;
         if (i == bottomRigth.row())
@@ -603,17 +618,17 @@ void QQuickTreeModelAdaptor1::modelDataChanged(const QModelIndex &topLeft, const
 void QQuickTreeModelAdaptor1::modelLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
 {
     ASSERT_CONSISTENCY();
-    Q_UNUSED(parents);
-    Q_UNUSED(hint);
+    Q_UNUSED(parents)
+    Q_UNUSED(hint)
 }
 
 void QQuickTreeModelAdaptor1::modelLayoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
 {
-    Q_UNUSED(hint);
+    Q_UNUSED(hint)
     if (parents.isEmpty()) {
         m_items.clear();
         showModelTopLevelItems(false /*doInsertRows*/);
-        emit dataChanged(index(0), index(m_items.count() - 1));
+        emit dataChanged(index(0, m_column), index(m_items.count() - 1, m_column));
     }
 
     for (const QPersistentModelIndex &pmi : parents) {
@@ -626,7 +641,7 @@ void QQuickTreeModelAdaptor1::modelLayoutChanged(const QList<QPersistentModelInd
                     int lastRow = lastChildIndex(lmi);
                     removeVisibleRows(row + 1, lastRow, false /*doRemoveRows*/);
                     showModelChildItems(m_items.at(row), 0, rowCount - 1, false /*doInsertRows*/);
-                    emit dataChanged(index(row + 1), index(lastRow));
+                    emit dataChanged(index(row + 1, m_column), index(lastRow, m_column));
                 }
             }
         }
@@ -636,9 +651,9 @@ void QQuickTreeModelAdaptor1::modelLayoutChanged(const QList<QPersistentModelInd
 
 void QQuickTreeModelAdaptor1::modelRowsAboutToBeInserted(const QModelIndex & parent, int start, int end)
 {
-    Q_UNUSED(parent);
-    Q_UNUSED(start);
-    Q_UNUSED(end);
+    Q_UNUSED(parent)
+    Q_UNUSED(start)
+    Q_UNUSED(end)
     ASSERT_CONSISTENCY();
 }
 
@@ -647,7 +662,7 @@ void QQuickTreeModelAdaptor1::modelRowsInserted(const QModelIndex & parent, int 
     TreeItem item;
     int parentRow = itemIndex(parent);
     if (parentRow >= 0) {
-        const QModelIndex& parentIndex = index(parentRow);
+        const QModelIndex& parentIndex = index(parentRow, m_column);
         QVector<int> changedRole(1, HasChildrenRole);
         queueDataChanged(parentIndex, parentIndex, changedRole);
         item = m_items.at(parentRow);
@@ -695,11 +710,11 @@ void QQuickTreeModelAdaptor1::modelRowsAboutToBeRemoved(const QModelIndex & pare
 
 void QQuickTreeModelAdaptor1::modelRowsRemoved(const QModelIndex & parent, int start, int end)
 {
-    Q_UNUSED(start);
-    Q_UNUSED(end);
+    Q_UNUSED(start)
+    Q_UNUSED(end)
     int parentRow = itemIndex(parent);
     if (parentRow >= 0) {
-        const QModelIndex& parentIndex = index(parentRow);
+        const QModelIndex& parentIndex = index(parentRow, m_column);
         QVector<int> changedRole(1, HasChildrenRole);
         queueDataChanged(parentIndex, parentIndex, changedRole);
     }

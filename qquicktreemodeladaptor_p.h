@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
 
 class QAbstractItemModel;
 
-class QQuickTreeModelAdaptor1 : public QAbstractListModel
+class QQuickTreeModelAdaptor1 : public QAbstractItemModel
 {
     Q_OBJECT
     Q_PROPERTY(QAbstractItemModel *model READ model WRITE setModel NOTIFY modelChanged)
@@ -76,6 +76,12 @@ public:
     void setRootIndex(const QModelIndex &idx);
     void resetRootIndex();
 
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex parent(const QModelIndex &child) const;
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+
     enum {
         DepthRole = Qt::UserRole - 5,
         ExpandedRole,
@@ -85,7 +91,6 @@ public:
     };
 
     QHash<int, QByteArray> roleNames() const;
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
 
@@ -181,15 +186,16 @@ private:
                           const QVector<int> &roles);
     void emitQueuedSignals();
 
-    QPointer<QAbstractItemModel> m_model;
+    QPointer<QAbstractItemModel> m_model = nullptr;
     QPersistentModelIndex m_rootIndex;
     QList<TreeItem> m_items;
     QSet<QPersistentModelIndex> m_expandedItems;
     QList<TreeItem *> m_itemsToExpand;
-    mutable int m_lastItemIndex;
-    bool m_visibleRowsMoved;
-    int m_signalAggregatorStack;
+    mutable int m_lastItemIndex = 0;
+    bool m_visibleRowsMoved = false;
+    int m_signalAggregatorStack = 0;
     QVector<DataChangedParams> m_queuedDataChanged;
+    int m_column = 0;
 };
 
 QT_END_NAMESPACE
