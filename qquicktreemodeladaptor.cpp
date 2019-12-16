@@ -178,7 +178,7 @@ int QQuickTreeModelAdaptor1::rowCount(const QModelIndex &) const
 
 int QQuickTreeModelAdaptor1::columnCount(const QModelIndex &) const
 {
-    return 3;
+    return m_model->columnCount();
 }
 
 QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
@@ -207,6 +207,8 @@ QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
         QModelIndex sourceModelIndex = m_model->index(index.row(), index.column());
         return m_model->data(sourceModelIndex, role);
     } else {
+        if (role == Qt::DisplayRole)
+            return QString();
         return QVariant();
     }
 }

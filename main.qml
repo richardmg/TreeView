@@ -1,11 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Window 2.1
 import TreeModel 1.0
+import Qt.labs.qmlmodels 1.0
 
 Window {
     id: root
-    width: 480
-    height: 640
+    width: 800
+    height: 600
     visible: true
     visibility: Window.AutomaticVisibility
 
@@ -36,34 +37,48 @@ Window {
             model: modelAdaptor
             columnSpacing: root.margins
 
-            delegate: Rectangle {
-                implicitWidth: text.x + text.width
-                implicitHeight: text.height
-                color: "white"
+            delegate: DelegateChooser {
+                DelegateChoice {
+                    column: 0 // the column where the tree is at
+                    Rectangle {
+                        implicitWidth: text.x + text.width
+                        implicitHeight: text.height
+                        color: "white"
 
-                Text {
-                    id: text
-                    x: _q_TreeView_ItemDepth * 20
-                    text: {
-                        var modelIndex = modelAdaptor.mapRowToModelIndex(index)
+                        Text {
+                            id: text
+                            x: _q_TreeView_ItemDepth * 20
+                            text: {
+                                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
 
-                        let text = ""
-                        if (_q_TreeView_HasChildren)
-                            text += _q_TreeView_ItemExpanded ? "⬇" : "⮕"
+                                let text = ""
+                                if (_q_TreeView_HasChildren)
+                                    text += _q_TreeView_ItemExpanded ? "⬇" : "⮕"
 
-                        text += "(icon) " + display
+                                text += "(icon) " + display
+                            }
+                        }
+
+                        TapHandler {
+                            onTapped: {
+                                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
+                                if (modelAdaptor.isExpanded(modelIndex))
+                                    modelAdaptor.collapse(modelIndex)
+                                else
+                                    modelAdaptor.expand(modelIndex)
+                            }
+                        }
                     }
                 }
-
-                MouseArea {
-                    // Use pointer handlers
-                    anchors.fill: parent
-                    onClicked: {
-                        var modelIndex = modelAdaptor.mapRowToModelIndex(index)
-                        if (modelAdaptor.isExpanded(modelIndex))
-                            modelAdaptor.collapse(modelIndex)
-                        else
-                            modelAdaptor.expand(modelIndex)
+                DelegateChoice {
+                    Rectangle {
+                        implicitWidth: text2.width
+                        implicitHeight: text2.height
+                        color: "white"
+                        Text {
+                            id: text2
+                            text: display
+                        }
                     }
                 }
             }
