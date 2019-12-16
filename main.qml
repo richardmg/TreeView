@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.1
 import Qt.labs.qmlmodels 1.0
 
-import TreeView 1.0
+import TreeView 2.15
 
 Window {
     id: root
@@ -35,17 +35,17 @@ Window {
 
                         Text {
                             id: text
-                            x: treeView.depth(index) * 20
+                            x: treeView.depth(row) * 20
                             text: {
                                 var text = "";
-                                if (treeView.hasChildren(index))
-                                    text += treeView.isExpanded(index) ? "⬇" : "⮕"
+                                if (treeView.hasChildren(row))
+                                    text += treeView.isExpanded(row) ? "▼ " : "▶ "
                                 text += display
                             }
                         }
 
                         TapHandler {
-                            onTapped: treeView.toggleExpanded(index)
+                            onTapped: treeView.toggleExpanded(row)
                         }
                     }
                 }

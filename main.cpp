@@ -9,7 +9,7 @@
 int main(int argc, char **argv){
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<QQuickTreeView>("TreeView", 1, 0, "TreeView");
+    qmlRegisterType<QQuickTreeView>("TreeView", 2, 15, "TreeView");
 
     QQmlApplicationEngine engine;
 
