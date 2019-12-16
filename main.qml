@@ -49,12 +49,8 @@ Window {
                             id: text
                             x: _q_TreeView_ItemDepth * 20
                             text: {
-                                var modelIndex = modelAdaptor.mapRowToModelIndex(index)
-
-                                let text = ""
                                 if (_q_TreeView_HasChildren)
-                                    text += _q_TreeView_ItemExpanded ? "⬇" : "⮕"
-
+                                    var text = _q_TreeView_ItemExpanded ? "⬇" : "⮕"
                                 text += "(icon) " + display
                             }
                         }
