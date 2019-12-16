@@ -186,31 +186,31 @@ QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
     if (!m_model)
         return QVariant();
 
-    if (index.column() == m_column) {
-        const QModelIndex &modelIndex = mapToModel(index);
+    const QModelIndex &sourceModelIndex = mapToModel(index);
+    if (!sourceModelIndex.isValid()) {
+        if (role == Qt::DisplayRole)
+            return QString();
+        return QVariant();
+    }
 
+    if (index.column() == m_column) {
         switch (role) {
         case DepthRole:
             return m_items.at(index.row()).depth;
         case ExpandedRole:
             return isExpanded(index.row());
         case HasChildrenRole:
-            return !(modelIndex.flags() & Qt::ItemNeverHasChildren) && m_model->hasChildren(modelIndex);
+            return !(sourceModelIndex.flags() & Qt::ItemNeverHasChildren) && m_model->hasChildren(sourceModelIndex);
         case HasSiblingRole:
-            return modelIndex.row() != m_model->rowCount(modelIndex.parent()) - 1;
+            return sourceModelIndex.row() != m_model->rowCount(sourceModelIndex.parent()) - 1;
         case ModelIndexRole:
-            return modelIndex;
+            return sourceModelIndex;
         default:
-            return m_model->data(modelIndex, role);
+            return m_model->data(sourceModelIndex, role);
         }
-    } else if (m_model->hasIndex(index.row(), index.column())) {
-        QModelIndex sourceModelIndex = m_model->index(index.row(), index.column());
-        return m_model->data(sourceModelIndex, role);
-    } else {
-        if (role == Qt::DisplayRole)
-            return QString();
-        return QVariant();
     }
+
+    return m_model->data(sourceModelIndex, role);
 }
 
 bool QQuickTreeModelAdaptor1::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -242,6 +242,7 @@ int QQuickTreeModelAdaptor1::itemIndex(const QModelIndex &index) const
 
     // We start nearest to the lastViewedItem
     int localCount = qMin(m_lastItemIndex - 1, totalCount - m_lastItemIndex);
+
     for (int i = 0; i < localCount; ++i) {
         const TreeItem &item1 = m_items.at(m_lastItemIndex + i);
         if (item1.index == index) {
@@ -262,6 +263,7 @@ int QQuickTreeModelAdaptor1::itemIndex(const QModelIndex &index) const
             return j;
         }
     }
+
     for (int j = qMin(totalCount, m_lastItemIndex - localCount) - 1; j >= 0; --j) {
         const TreeItem &item = m_items.at(j);
         if (item.index == index) {
@@ -285,9 +287,10 @@ bool QQuickTreeModelAdaptor1::childrenVisible(const QModelIndex &index)
            || (m_expandedItems.contains(index) && isVisible(index));
 }
 
-const QModelIndex &QQuickTreeModelAdaptor1::mapToModel(const QModelIndex &index) const
+QModelIndex QQuickTreeModelAdaptor1::mapToModel(const QModelIndex &index) const
 {
-    return m_items.at(index.row()).index;
+    const QModelIndex modelIndexAtTreeColumn = m_items.at(index.row()).index;
+    return m_model->index(modelIndexAtTreeColumn.row(), index.column(), modelIndexAtTreeColumn.parent());
 }
 
 QModelIndex QQuickTreeModelAdaptor1::mapRowToModelIndex(int row) const
