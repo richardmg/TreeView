@@ -69,7 +69,7 @@ class QQuickTreeModelAdaptor1 : public QAbstractItemModel
     struct TreeItem;
 
 public:
-    explicit QQuickTreeModelAdaptor1(QObject *parent = 0);
+    explicit QQuickTreeModelAdaptor1(QObject *parent = nullptr);
 
     QAbstractItemModel *model() const;
     const QModelIndex &rootIndex() const;
@@ -112,14 +112,10 @@ public:
     int lastChildIndex(const QModelIndex &index);
     void removeVisibleRows(int startIndex, int endIndex, bool doRemoveRows = true);
 
-    void expandRow(int n);
-    void collapseRow(int n);
-    bool isExpanded(int row) const;
-
-    Q_INVOKABLE bool isExpanded(const QModelIndex &) const;
-
     void dump() const;
     bool testConsistency(bool dumpOnFail = false) const;
+
+    using QAbstractItemModel::hasChildren;
 
 signals:
     void modelChanged(QAbstractItemModel *model);
@@ -130,8 +126,14 @@ signals:
 public slots:
     void expand(const QModelIndex &);
     void collapse(const QModelIndex &);
-
     void setModel(QAbstractItemModel *model);
+    bool isExpanded(const QModelIndex &) const;
+    bool isExpanded(int row) const;
+    bool hasChildren(int row) const;
+    bool hasSiblings(int row) const;
+    int depthAtRow(int row) const;
+    void expandRow(int n);
+    void collapseRow(int n);
 
 private slots:
     void modelHasBeenDestroyed();

@@ -161,24 +161,21 @@ QHash<int, QByteArray> QQuickTreeModelAdaptor1::roleNames() const
 {
     if (!m_model)
         return QHash<int, QByteArray>();
-
-    QHash<int, QByteArray> modelRoleNames = m_model->roleNames();
-    modelRoleNames.insert(DepthRole, "_q_TreeView_ItemDepth");
-    modelRoleNames.insert(ExpandedRole, "_q_TreeView_ItemExpanded");
-    modelRoleNames.insert(HasChildrenRole, "_q_TreeView_HasChildren");
-    modelRoleNames.insert(HasSiblingRole, "_q_TreeView_HasSibling");
-    modelRoleNames.insert(ModelIndexRole, "_q_TreeView_ModelIndex");
-    return modelRoleNames;
+    return m_model->roleNames();
 }
 
 int QQuickTreeModelAdaptor1::rowCount(const QModelIndex &) const
 {
+    if (!m_model)
+        return 0;
     return m_items.count();
 }
 
-int QQuickTreeModelAdaptor1::columnCount(const QModelIndex &) const
+int QQuickTreeModelAdaptor1::columnCount(const QModelIndex &parent) const
 {
-    return m_model->columnCount();
+    if (!m_model)
+        return 0;
+    return m_model->columnCount(parent);
 }
 
 QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
@@ -186,31 +183,7 @@ QVariant QQuickTreeModelAdaptor1::data(const QModelIndex &index, int role) const
     if (!m_model)
         return QVariant();
 
-    const QModelIndex &sourceModelIndex = mapToModel(index);
-    if (!sourceModelIndex.isValid()) {
-        if (role == Qt::DisplayRole)
-            return QString();
-        return QVariant();
-    }
-
-    if (index.column() == m_column) {
-        switch (role) {
-        case DepthRole:
-            return m_items.at(index.row()).depth;
-        case ExpandedRole:
-            return isExpanded(index.row());
-        case HasChildrenRole:
-            return !(sourceModelIndex.flags() & Qt::ItemNeverHasChildren) && m_model->hasChildren(sourceModelIndex);
-        case HasSiblingRole:
-            return sourceModelIndex.row() != m_model->rowCount(sourceModelIndex.parent()) - 1;
-        case ModelIndexRole:
-            return sourceModelIndex;
-        default:
-            return m_model->data(sourceModelIndex, role);
-        }
-    }
-
-    return m_model->data(sourceModelIndex, role);
+    return m_model->data(mapToModel(index), role);
 }
 
 bool QQuickTreeModelAdaptor1::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -218,18 +191,14 @@ bool QQuickTreeModelAdaptor1::setData(const QModelIndex &index, const QVariant &
     if (!m_model)
         return false;
 
-    switch (role) {
-    case DepthRole:
-    case ExpandedRole:
-    case HasChildrenRole:
-    case HasSiblingRole:
-    case ModelIndexRole:
-        return false;
-    default: {
-        const QModelIndex &pmi = mapToModel(index);
-        return m_model->setData(pmi, value, role);
-    }
-    }
+    return m_model->setData(mapToModel(index), value, role);
+}
+
+int QQuickTreeModelAdaptor1::depthAtRow(int row) const
+{
+    if (row < 0 || row >= m_items.count())
+        return 0;
+    return m_items.at(row).depth;
 }
 
 int QQuickTreeModelAdaptor1::itemIndex(const QModelIndex &index) const
@@ -289,14 +258,12 @@ bool QQuickTreeModelAdaptor1::childrenVisible(const QModelIndex &index)
 
 QModelIndex QQuickTreeModelAdaptor1::mapToModel(const QModelIndex &index) const
 {
-    const QModelIndex modelIndexAtTreeColumn = m_items.at(index.row()).index;
-    return m_model->index(modelIndexAtTreeColumn.row(), index.column(), modelIndexAtTreeColumn.parent());
+    const QModelIndex sourceIndex = m_items.at(index.row()).index;
+    return m_model->index(sourceIndex.row(), index.column(), sourceIndex.parent());
 }
 
 QModelIndex QQuickTreeModelAdaptor1::mapRowToModelIndex(int row) const
 {
-    if (!m_model)
-        return QModelIndex();
     if (row < 0 || row >= m_items.count())
         return QModelIndex();
     return m_items.at(row).index;
@@ -425,7 +392,9 @@ void QQuickTreeModelAdaptor1::expand(const QModelIndex &idx)
     ASSERT_CONSISTENCY();
     if (!m_model)
         return;
+
     Q_ASSERT(!idx.isValid() || idx.model() == m_model);
+
     if (!idx.isValid() || !m_model->hasChildren(idx))
         return;
     if (m_expandedItems.contains(idx))
@@ -446,7 +415,9 @@ void QQuickTreeModelAdaptor1::collapse(const QModelIndex &idx)
     ASSERT_CONSISTENCY();
     if (!m_model)
         return;
+
     Q_ASSERT(!idx.isValid() || idx.model() == m_model);
+
     if (!idx.isValid() || !m_model->hasChildren(idx))
         return;
     if (!m_expandedItems.contains(idx))
@@ -467,13 +438,29 @@ bool QQuickTreeModelAdaptor1::isExpanded(const QModelIndex &index) const
     ASSERT_CONSISTENCY();
     if (!m_model)
         return false;
+
     Q_ASSERT(!index.isValid() || index.model() == m_model);
     return !index.isValid() || m_expandedItems.contains(index);
 }
 
 bool QQuickTreeModelAdaptor1::isExpanded(int row) const
 {
+    if (row < 0 || row >= m_items.count())
+        return false;
     return m_items.at(row).expanded;
+}
+
+bool QQuickTreeModelAdaptor1::hasChildren(int row) const
+{
+    if (row < 0 || row >= m_items.count())
+        return false;
+    return m_model->hasChildren(m_items[row].index);
+}
+
+bool QQuickTreeModelAdaptor1::hasSiblings(int row) const
+{
+    const QModelIndex &index = mapToModel(mapRowToModelIndex(row));
+    return index.row() != m_model->rowCount(index.parent()) - 1;
 }
 
 void QQuickTreeModelAdaptor1::expandRow(int n)

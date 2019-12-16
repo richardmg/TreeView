@@ -31,8 +31,7 @@ Window {
 
             function isRowExpanded(row)
             {
-                var modelIndex = modelAdaptor.mapRowToModelIndex(row)
-                return modelAdaptor.isExpanded(modelIndex);
+                return modelAdaptor.isExpanded(row);
             }
 
             function setRowExpanded(row, expanded)
@@ -49,9 +48,19 @@ Window {
                 setRowExpanded(row, !isRowExpanded(row))
             }
 
-            function depthForRow(row)
+            function depthAtRow(row)
             {
+                return modelAdaptor.depthAtRow(row)
+            }
 
+            function hasChildren(row)
+            {
+                return modelAdaptor.hasChildren(row)
+            }
+
+            function hasSiblings(row)
+            {
+                return modelAdaptor.hasSiblings(row)
             }
 
             delegate: DelegateChooser {
@@ -64,10 +73,11 @@ Window {
 
                         Text {
                             id: text
-                            x: _q_TreeView_ItemDepth * 20
+                            x: treeView.depthAtRow(row) * 20
                             text: {
-                                if (_q_TreeView_HasChildren)
-                                    var text = _q_TreeView_ItemExpanded ? "⬇" : "⮕"
+                                var text = "";
+                                if (treeView.hasChildren(row))
+                                    text += treeView.isRowExpanded(row) ? "⬇" : "⮕"
                                 text += display
                             }
                         }
