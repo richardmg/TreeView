@@ -12,18 +12,9 @@ Window {
 
     property int margins: 2
 
-    TreeModel {
-        id: treeModel
-    }
-
-    TreeToTableModel {
-        id: treeToTableModel
-        sourceModel: treeModel
-    }
-
     TreeModelAdaptor {
         id: modelAdaptor
-        model: treeModel
+        model: fileSystemModel
     }
 
     Rectangle {

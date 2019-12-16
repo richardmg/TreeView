@@ -1,12 +1,11 @@
 TEMPLATE = app
-QT += gui qml quick
+QT += gui qml quick widgets
 RESOURCES += main.qml default.txt
 
 # Input
 SOURCES += main.cpp \
     treeitem.cpp \
     treemodel.cpp \
-    treetotablemodel.cpp \
     qquicktreemodeladaptor.cpp
 
 OTHER_FILES += \
@@ -15,5 +14,4 @@ OTHER_FILES += \
 HEADERS += \
     treeitem.h \
     treemodel.h \
-    treetotablemodel.h \
     qquicktreemodeladaptor_p.h
