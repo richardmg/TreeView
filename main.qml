@@ -50,6 +50,11 @@ Window {
                         implicitHeight: text.height
                         color: bgColor(row)
 
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: selectRow(row)
+                        }
+
                         Text {
                             id: text
                             x: treeView.depth(row) * 20
@@ -66,13 +71,9 @@ Window {
                                     if (treeView.hasChildren(row))
                                         treeView.toggleExpanded(row)
                                     else
-                                       selectRow(row)
+                                        selectRow(row)
                                 }
                             }
-                        }
-
-                        TapHandler {
-                            onTapped: selectRow(row)
                         }
                     }
                 }
@@ -85,6 +86,11 @@ Window {
                         Text {
                             id: text2
                             text: display
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: selectRow(row)
                         }
                     }
                 }
