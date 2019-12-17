@@ -7,8 +7,6 @@ RESOURCES += main.qml \
 
 SOURCES += main.cpp \
     qquicktreeview.cpp \
-    treeitem.cpp \
-    treemodel.cpp \
     qquicktreemodeladaptor.cpp
 
 OTHER_FILES += \
@@ -16,6 +14,4 @@ OTHER_FILES += \
 
 HEADERS += \
     qquicktreeview.h \
-    treeitem.h \
-    treemodel.h \
     qquicktreemodeladaptor_p.h
