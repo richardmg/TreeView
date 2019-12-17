@@ -2,8 +2,8 @@ TEMPLATE = app
 QT += gui qml quick widgets quick-private
 
 RESOURCES += main.qml \
-        TreeView.qml \
-        default.txt
+    TreeView.qml \
+    +style1/TreeView.qml
 
 SOURCES += main.cpp \
     qquicktreeview.cpp \
@@ -15,3 +15,5 @@ OTHER_FILES += \
 HEADERS += \
     qquicktreeview.h \
     qquicktreemodeladaptor_p.h
+
+DISTFILES += \
