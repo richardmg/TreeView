@@ -10,8 +10,8 @@ T.TreeView {
             column: 0 // the column where the tree is at
 
             Rectangle {
-                implicitWidth: text.x + text.width
-                implicitHeight: text.height
+                implicitWidth: childrenRect.width
+                implicitHeight: childrenRect.height
                 color: bgColor(row)
 
                 MouseArea {
@@ -19,14 +19,44 @@ T.TreeView {
                     onClicked: selectRow(row)
                 }
 
-                Text {
-                    id: text
+                Item {
                     x: treeView.depth(row) * 20
-                    text: {
-                        var text = "";
-                        if (treeView.hasChildren(row))
-                            text += treeView.isExpanded(row) ? "▼ " : "▶ "
-                        text += display
+                    width: childrenRect.width
+                    height: childrenRect.height
+
+                    Rectangle {
+                        id: expandSign
+                        visible: treeView.hasChildren(row)
+                        y: 4
+                        width: 11
+                        height: 11
+                        color: "transparent"
+                        border.width: 1
+                        border.color: Qt.rgba(0.7, 0.7, 0.7)
+                        Rectangle {
+                            anchors.centerIn: parent
+                            color: "black"
+                            width: 5
+                            height: 1
+                        }
+                        Rectangle {
+                            anchors.centerIn: parent
+                            color: "black"
+                            width: 1
+                            height: 5
+                            visible: !treeView.isExpanded(row)
+                        }
+                    }
+
+                    Text {
+                        id: text
+                        anchors.left: expandSign.right
+                        anchors.leftMargin: 2
+                        anchors.verticalCenter: expandSign.verticalCenter
+                        text: {
+                            var text = "";
+                            text += display
+                        }
                     }
 
                     MouseArea {
