@@ -1,8 +1,10 @@
 TEMPLATE = app
 QT += gui qml quick widgets quick-private
-RESOURCES += main.qml default.txt
 
-# Input
+RESOURCES += main.qml \
+        TreeView.qml \
+        default.txt
+
 SOURCES += main.cpp \
     qquicktreeview.cpp \
     treeitem.cpp \
