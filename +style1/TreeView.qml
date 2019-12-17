@@ -19,7 +19,27 @@ T.TreeView {
                     onClicked: selectRow(row)
                 }
 
+                Rectangle {
+                    id: verticalLineToParent
+                    color: expandSign.border.color
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: (treeView.depth(row - 1) * 20) + (expandSign.width / 2)
+                    width: (treeView.depth(row) * 20) - x
+                    height: 1
+                    //visible: treeView.hasParent(row)
+                }
+
+                Rectangle {
+                    id: horizontalLineToParent
+                    color: expandSign.border.color
+                    x: verticalLineToParent.x
+                    width: 1
+                    height: parent.height / 2
+                    //visible: treeView.hasParent(row)
+                }
+
                 Item {
+                    id: label
                     x: treeView.depth(row) * 20
                     width: childrenRect.width
                     height: parent.height
@@ -94,6 +114,7 @@ T.TreeView {
                 implicitWidth: text2.width + 20
                 implicitHeight: text2.height
                 color: bgColor(row)
+
                 Text {
                     id: text2
                     x: 10
