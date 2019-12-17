@@ -18,7 +18,6 @@ Window {
             anchors.fill: parent
             anchors.margins: 2
             model: fileSystemModel
-            columnSpacing: 2
             clip: true
         }
     }

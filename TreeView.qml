@@ -44,11 +44,12 @@ T.TreeView {
 
         DelegateChoice {
             Rectangle {
-                implicitWidth: text2.width
+                implicitWidth: text2.width + 20
                 implicitHeight: text2.height
                 color: bgColor(row)
                 Text {
                     id: text2
+                    x: 10
                     text: display
                 }
 

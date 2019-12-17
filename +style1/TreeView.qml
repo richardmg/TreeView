@@ -11,7 +11,7 @@ T.TreeView {
 
             Rectangle {
                 implicitWidth: childrenRect.width
-                implicitHeight: childrenRect.height
+                implicitHeight: 20
                 color: bgColor(row)
 
                 MouseArea {
@@ -22,7 +22,7 @@ T.TreeView {
                 Item {
                     x: treeView.depth(row) * 20
                     width: childrenRect.width
-                    height: childrenRect.height
+                    height: parent.height
 
                     Rectangle {
                         id: expandSign
@@ -48,15 +48,32 @@ T.TreeView {
                         }
                     }
 
+                    Rectangle {
+                        id: lineToSiblingAbove
+                        color: expandSign.border.color
+                        anchors.horizontalCenter: expandSign.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.bottom: expandSign.top
+                        width: 1
+                        //visible: treeView.hasParent(row)
+                    }
+
+                    Rectangle {
+                        id: lineToSiblingBelow
+                        color: expandSign.border.color
+                        anchors.horizontalCenter: expandSign.horizontalCenter
+                        anchors.top: expandSign.bottom
+                        anchors.bottom: parent.bottom
+                        width: 1
+                        //visible: treeView.hasParent(row)
+                    }
+
                     Text {
                         id: text
                         anchors.left: expandSign.right
-                        anchors.leftMargin: 2
+                        anchors.leftMargin: 4
                         anchors.verticalCenter: expandSign.verticalCenter
-                        text: {
-                            var text = "";
-                            text += display
-                        }
+                        text: display
                     }
 
                     MouseArea {
@@ -74,11 +91,12 @@ T.TreeView {
 
         DelegateChoice {
             Rectangle {
-                implicitWidth: text2.width
+                implicitWidth: text2.width + 20
                 implicitHeight: text2.height
                 color: bgColor(row)
                 Text {
                     id: text2
+                    x: 10
                     text: display
                 }
 
