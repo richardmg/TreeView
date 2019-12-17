@@ -12,11 +12,14 @@ Window {
     visibility: Window.AutomaticVisibility
 
     property int margins: 2
+    function bgColor(row) {
+        return row % 2 ? Qt.rgba(0.7, 0.7, 1, 1) : Qt.rgba(0.8, 0.8, 1, 1)
+    }
 
     Rectangle {
         anchors.fill: parent
         anchors.margins: 10
-        color: "lightgray"
+        color: Qt.rgba(0.9, 0.9, 0.9, 1)
 
         TreeView {
             id: treeView
@@ -26,12 +29,13 @@ Window {
             columnSpacing: root.margins
 
             delegate: DelegateChooser {
+
                 DelegateChoice {
                     column: 0 // the column where the tree is at
                     Rectangle {
                         implicitWidth: text.x + text.width
                         implicitHeight: text.height
-                        color: "white"
+                        color: bgColor(row)
 
                         Text {
                             id: text
@@ -49,11 +53,12 @@ Window {
                         }
                     }
                 }
+
                 DelegateChoice {
                     Rectangle {
                         implicitWidth: text2.width
                         implicitHeight: text2.height
-                        color: "white"
+                        color: bgColor(row)
                         Text {
                             id: text2
                             text: display
