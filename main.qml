@@ -11,9 +11,10 @@ Window {
     visible: true
     visibility: Window.AutomaticVisibility
 
+    property var selectedIndex
     property int margins: 2
     function bgColor(row) {
-        return row % 2 ? Qt.rgba(0.7, 0.7, 1, 1) : Qt.rgba(0.8, 0.8, 1, 1)
+        return row % 2 ? Qt.rgba(0.8, 0.8, 1, 1) : Qt.rgba(0.9, 0.9, 1, 1)
     }
 
     Rectangle {
@@ -32,10 +33,11 @@ Window {
 
                 DelegateChoice {
                     column: 0 // the column where the tree is at
+
                     Rectangle {
                         implicitWidth: text.x + text.width
                         implicitHeight: text.height
-                        color: bgColor(row)
+                        color: treeView.modelIndex(row, 0) === selectedIndex ? "blue" : bgColor(row)
 
                         Text {
                             id: text
@@ -46,10 +48,15 @@ Window {
                                     text += treeView.isExpanded(row) ? "▼ " : "▶ "
                                 text += display
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: treeView.toggleExpanded(row)
+                            }
                         }
 
                         TapHandler {
-                            onTapped: treeView.toggleExpanded(row)
+                            onTapped: selectedIndex = treeView.modelIndex(row, 0)
                         }
                     }
                 }

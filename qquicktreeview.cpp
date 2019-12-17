@@ -90,6 +90,14 @@ void QQuickTreeView::toggleExpanded(int row)
         expand(row);
 }
 
+QModelIndex QQuickTreeView::modelIndex(int row, int column)
+{
+    Q_D(QQuickTreeView);
+
+    const QModelIndex index = d->m_proxyModel.index(row, column);
+    return d_func()->m_proxyModel.mapToModel(index);
+}
+
 #include "moc_qquicktreeview.cpp"
 
 QT_END_NAMESPACE

@@ -26,6 +26,8 @@ public:
     Q_INVOKABLE void collapse(int row);
     Q_INVOKABLE void toggleExpanded(int row);
 
+    Q_INVOKABLE QModelIndex modelIndex(int row, int column);
+
 private:
     Q_DISABLE_COPY(QQuickTreeView)
     Q_DECLARE_PRIVATE(QQuickTreeView)
