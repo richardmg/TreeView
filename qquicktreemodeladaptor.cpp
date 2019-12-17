@@ -459,7 +459,7 @@ bool QQuickTreeModelAdaptor1::hasChildren(int row) const
 
 bool QQuickTreeModelAdaptor1::hasSiblings(int row) const
 {
-    const QModelIndex &index = mapToModel(mapToModel(row));
+    const QModelIndex &index = mapToModel(row);
     return index.row() != m_model->rowCount(index.parent()) - 1;
 }
 

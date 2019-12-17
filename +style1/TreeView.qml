@@ -19,25 +19,6 @@ T.TreeView {
                     onClicked: selectRow(row)
                 }
 
-                Rectangle {
-                    id: verticalLineToParent
-                    color: expandSign.border.color
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: (treeView.depth(row - 1) * 20) + (expandSign.width / 2)
-                    width: (treeView.depth(row) * 20) - x
-                    height: 1
-                    //visible: treeView.hasParent(row)
-                }
-
-                Rectangle {
-                    id: horizontalLineToParent
-                    color: expandSign.border.color
-                    x: verticalLineToParent.x
-                    width: 1
-                    height: parent.height / 2
-                    //visible: treeView.hasParent(row)
-                }
-
                 Item {
                     id: label
                     x: treeView.depth(row) * 20
@@ -48,44 +29,52 @@ T.TreeView {
                         id: expandSign
                         visible: treeView.hasChildren(row)
                         y: 4
-                        width: 11
-                        height: 11
+                        width: 13
+                        height: 13
                         color: "transparent"
                         border.width: 1
                         border.color: Qt.rgba(0.7, 0.7, 0.7)
-                        Rectangle {
-                            anchors.centerIn: parent
-                            color: "black"
-                            width: 5
-                            height: 1
+
+                        Text {
+                            x: 2.5
+                            y: 1
+                            text: treeView.isExpanded(row) ? "─" : "┼"
+                            font.pixelSize: 8
                         }
+                    }
+
+                    Rectangle {
+                        id: fileSign
+                        visible: !expandSign.visible
+                        x: expandSign.width / 2
+                        width: 1
+                        height: parent.height
+                        color: expandSign.border.color
                         Rectangle {
-                            anchors.centerIn: parent
-                            color: "black"
-                            width: 1
-                            height: 5
-                            visible: !treeView.isExpanded(row)
+                            width: 6
+                            height: 1
+                            y: parent.height / 2
+                            color: fileSign.color
                         }
                     }
 
                     Rectangle {
                         id: lineToSiblingAbove
                         color: expandSign.border.color
-                        anchors.horizontalCenter: expandSign.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.bottom: expandSign.top
+                        x: expandSign.width / 2
                         width: 1
-                        //visible: treeView.hasParent(row)
+                        height: 4
+                        visible: row != 0 && treeView.depth(row) === treeView.depth(row - 1)
                     }
 
                     Rectangle {
                         id: lineToSiblingBelow
                         color: expandSign.border.color
-                        anchors.horizontalCenter: expandSign.horizontalCenter
+                        x: expandSign.width / 2
                         anchors.top: expandSign.bottom
-                        anchors.bottom: parent.bottom
                         width: 1
-                        //visible: treeView.hasParent(row)
+                        height: 4
+                        visible: row != 0 && treeView.depth(row) === treeView.depth(row + 1)
                     }
 
                     Text {
