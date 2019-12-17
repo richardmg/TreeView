@@ -13,8 +13,19 @@ Window {
 
     property var selectedIndex
     property int margins: 2
+
+    function selectRow(row)
+    {
+        selectedIndex = treeView.modelIndex(row, 0)
+    }
+
     function bgColor(row) {
-        return row % 2 ? Qt.rgba(0.8, 0.8, 1, 1) : Qt.rgba(0.9, 0.9, 1, 1)
+        if (treeView.modelIndex(row, 0) === selectedIndex)
+            return Qt.rgba(0.9, 1, 0.9, 1)
+        else if (row % 2)
+            return Qt.rgba(0.8, 0.8, 1, 1)
+        else
+            return Qt.rgba(0.9, 0.9, 1, 1)
     }
 
     Rectangle {
@@ -37,7 +48,7 @@ Window {
                     Rectangle {
                         implicitWidth: text.x + text.width
                         implicitHeight: text.height
-                        color: treeView.modelIndex(row, 0) === selectedIndex ? "blue" : bgColor(row)
+                        color: bgColor(row)
 
                         Text {
                             id: text
@@ -51,12 +62,17 @@ Window {
 
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: treeView.toggleExpanded(row)
+                                onClicked: {
+                                    if (treeView.hasChildren(row))
+                                        treeView.toggleExpanded(row)
+                                    else
+                                       selectRow(row)
+                                }
                             }
                         }
 
                         TapHandler {
-                            onTapped: selectedIndex = treeView.modelIndex(row, 0)
+                            onTapped: selectRow(row)
                         }
                     }
                 }
