@@ -15,8 +15,6 @@ public:
     QQuickTreeView(QQuickItem *parent = nullptr);
     ~QQuickTreeView() override;
 
-    void setModel(const QVariant &newModel) override;
-
     Q_INVOKABLE bool isExpanded(int row) const;
     Q_INVOKABLE bool hasChildren(int row) const;
     Q_INVOKABLE bool hasSiblings(int row) const;

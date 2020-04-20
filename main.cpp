@@ -4,7 +4,7 @@
 #include <QFileSystemModel>
 
 #include "treemodel.h"
-#include "qquicktreeview.h"
+#include "qquicktreeview_p.h"
 
 int main(int argc, char **argv){
     QGuiApplication app(argc, argv);

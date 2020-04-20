@@ -1,21 +1,34 @@
-#include "qquicktreeview.h"
-
-#include <QtQuick/private/qquicktableview_p_p.h>
+#include "qquicktreeview_p.h"
 #include "qquicktreemodeladaptor_p.h"
+
+#include "qquicktreeview_p_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QQuickTreeViewPrivate : public QQuickTableViewPrivate
-{
-public:
-    ~QQuickTreeViewPrivate() override;
-    Q_DECLARE_PUBLIC(QQuickTreeView)
-
-    QQuickTreeModelAdaptor1 m_proxyModel;
-};
-
 QQuickTreeViewPrivate::~QQuickTreeViewPrivate()
 {
+}
+
+void QQuickTreeViewPrivate::setModelImpl(const QVariant &newModel)
+{
+    Q_Q(QQuickTreeView);
+
+    QVariant effectiveModelVariant = newModel;
+    if (effectiveModelVariant.userType() == qMetaTypeId<QJSValue>())
+        effectiveModelVariant = effectiveModelVariant.value<QJSValue>().toVariant();
+
+    if (effectiveModelVariant.isNull()) {
+        m_proxyModel.setModel(nullptr);
+        return;
+    }
+
+    const auto qaim = qobject_cast<QAbstractItemModel *>(qvariant_cast<QAbstractItemModel*>(effectiveModelVariant));
+    if (!qaim) {
+        qmlWarning(q) << "TreeView only accepts models of type QAbstractItemModel";
+        return;
+    }
+
+    m_proxyModel.setModel(qaim);
 }
 
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
@@ -28,28 +41,6 @@ QQuickTreeView::QQuickTreeView(QQuickItem *parent)
 
 QQuickTreeView::~QQuickTreeView()
 {
-}
-
-void QQuickTreeView::setModel(const QVariant &newModel)
-{
-    Q_D(QQuickTreeView);
-
-    QVariant effectiveModelVariant = newModel;
-    if (effectiveModelVariant.userType() == qMetaTypeId<QJSValue>())
-        effectiveModelVariant = effectiveModelVariant.value<QJSValue>().toVariant();
-
-    if (effectiveModelVariant.isNull()) {
-        d->m_proxyModel.setModel(nullptr);
-        return;
-    }
-
-    const auto qaim = qobject_cast<QAbstractItemModel *>(qvariant_cast<QAbstractItemModel*>(effectiveModelVariant));
-    if (!qaim) {
-        qmlWarning(this) << "TreeView only accepts models of type QAbstractItemModel";
-        return;
-    }
-
-    d->m_proxyModel.setModel(qaim);
 }
 
 bool QQuickTreeView::isExpanded(int row) const
@@ -98,6 +89,6 @@ QModelIndex QQuickTreeView::modelIndex(int row, int column)
     return d_func()->m_proxyModel.mapToModel(index);
 }
 
-#include "moc_qquicktreeview.cpp"
+#include "moc_qquicktreeview_p.cpp"
 
 QT_END_NAMESPACE
