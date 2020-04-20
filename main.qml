@@ -19,6 +19,8 @@ Window {
             anchors.margins: 2
             model: fileSystemModel
             clip: true
+            focus: true
+            onCurrentRowChanged: print(currentRow)
         }
     }
 }

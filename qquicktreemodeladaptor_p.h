@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
 
 class QAbstractItemModel;
 
-class QQuickTreeModelAdaptor1 : public QAbstractItemModel
+class QQuickTreeModelAdaptor : public QAbstractItemModel
 {
     Q_OBJECT
     Q_PROPERTY(QAbstractItemModel *model READ model WRITE setModel NOTIFY modelChanged)
@@ -69,7 +69,7 @@ class QQuickTreeModelAdaptor1 : public QAbstractItemModel
     struct TreeItem;
 
 public:
-    explicit QQuickTreeModelAdaptor1(QObject *parent = nullptr);
+    explicit QQuickTreeModelAdaptor(QObject *parent = nullptr);
 
     QAbstractItemModel *model() const;
     const QModelIndex &rootIndex() const;
@@ -171,13 +171,13 @@ private:
     };
 
     struct SignalFreezer {
-        SignalFreezer(QQuickTreeModelAdaptor1 *parent) : m_parent(parent) {
+        SignalFreezer(QQuickTreeModelAdaptor *parent) : m_parent(parent) {
             m_parent->enableSignalAggregation();
         }
         ~SignalFreezer() { m_parent->disableSignalAggregation(); }
 
     private:
-        QQuickTreeModelAdaptor1 *m_parent;
+        QQuickTreeModelAdaptor *m_parent;
     };
 
     void enableSignalAggregation();

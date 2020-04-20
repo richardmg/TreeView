@@ -10,6 +10,7 @@ class QQuickTreeViewPrivate;
 class QQuickTreeView : public QQuickTableView
 {
     Q_OBJECT
+    Q_PROPERTY(int currentRow READ currentRow WRITE setCurrentRow NOTIFY currentRowChanged);
 
 public:
     QQuickTreeView(QQuickItem *parent = nullptr);
@@ -25,6 +26,14 @@ public:
     Q_INVOKABLE void toggleExpanded(int row);
 
     Q_INVOKABLE QModelIndex modelIndex(int row, int column);
+
+    int currentRow() const;
+    void setCurrentRow(int row);
+
+    void keyReleaseEvent(QKeyEvent *e) override;
+
+signals:
+    void currentRowChanged();
 
 private:
     Q_DISABLE_COPY(QQuickTreeView)

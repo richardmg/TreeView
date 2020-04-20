@@ -16,7 +16,7 @@ T.TreeView {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: selectRow(row)
+                    onClicked: treeView.currentRow = row
                 }
 
                 Item {
@@ -91,7 +91,7 @@ T.TreeView {
                             if (treeView.hasChildren(row))
                                 treeView.toggleExpanded(row)
                             else
-                                selectRow(row)
+                                treeView.currentRow = row
                         }
                     }
                 }
@@ -112,18 +112,13 @@ T.TreeView {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: selectRow(row)
+                    onClicked: treeView.currentRow = row
                 }
             }
         }
     }
 
     property var selectedIndex
-
-    function selectRow(row)
-    {
-        selectedIndex = treeView.modelIndex(row, 0)
-    }
 
     function bgColor(row) {
         if (treeView.modelIndex(row, 0) === selectedIndex)
