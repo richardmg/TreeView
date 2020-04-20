@@ -14,6 +14,10 @@ public:
     void syncModel() override;
 
 private:
+    // QQuickTreeModelAdaptor1 basically takes a tree model and flattens
+    // it into a list (which will be displayed in the first column of
+    // the table). Each node in the tree can have several columns of
+    // data in the model, which we show in the remaining columns of the table.
     QQuickTreeModelAdaptor1 m_proxyModel;
 };
 
