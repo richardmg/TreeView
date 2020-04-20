@@ -22,7 +22,7 @@ void QQuickTreeViewPrivate::syncModel()
     else if (qaim)
         m_proxyModel.setModel(qaim);
     else
-        qmlWarning(q_func()) << "TreeView only accepts models of type QAbstractItemModel";
+        qmlWarning(q_func()) << "treeView only accept models of type QAbstractItemModel";
 
     const auto tmp = assignedModel;
     assignedModel = QVariant::fromValue(std::addressof(m_proxyModel));
