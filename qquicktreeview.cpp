@@ -9,33 +9,43 @@ QQuickTreeViewPrivate::~QQuickTreeViewPrivate()
 {
 }
 
-void QQuickTreeViewPrivate::syncModel()
+QVariant QQuickTreeViewPrivate::modelImpl() const
 {
-    QVariant effectiveModelVariant = assignedModel;
-    if (effectiveModelVariant.userType() == qMetaTypeId<QJSValue>())
-        effectiveModelVariant = effectiveModelVariant.value<QJSValue>().toVariant();
+    return m_assignedModel;
+}
 
-    const auto qaim = qobject_cast<QAbstractItemModel *>(qvariant_cast<QAbstractItemModel*>(effectiveModelVariant));
+void QQuickTreeViewPrivate::setModelImpl(const QVariant &newModel)
+{
+    Q_Q(QQuickTreeView);
 
-    if (effectiveModelVariant.isNull())
+    if (newModel == m_assignedModel)
+        return;
+
+    m_assignedModel = newModel;
+    QVariant effectiveModel = m_assignedModel;
+    if (effectiveModel.userType() == qMetaTypeId<QJSValue>())
+        effectiveModel = effectiveModel.value<QJSValue>().toVariant();
+
+    if (effectiveModel.isNull())
         m_proxyModel.setModel(nullptr);
-    else if (qaim)
+    else if (const auto qaim = qvariant_cast<QAbstractItemModel*>(effectiveModel))
         m_proxyModel.setModel(qaim);
     else
-        qmlWarning(q_func()) << "treeView only accept models of type QAbstractItemModel";
+        qmlWarning(q) << "treeView only accept models of type QAbstractItemModel";
 
-    const auto tmp = assignedModel;
-    assignedModel = QVariant::fromValue(std::addressof(m_proxyModel));
-    QQuickTableViewPrivate::syncModel();
-    assignedModel = tmp;
+    if (modelVariant.isNull()) {
+        // First time. m_proxyModel is the only model TableView will ever see:
+        const auto proxy = QVariant::fromValue(std::addressof(m_proxyModel));
+        QQuickTableViewPrivate::setModelImpl(proxy);
+    } else {
+        scheduleRebuildTable(QQuickTableViewPrivate::RebuildOption::All);
+        emit q->modelChanged();
+    }
 }
 
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
     : QQuickTableView(*(new QQuickTreeViewPrivate), parent)
 {
-    const auto qaim = static_cast<QAbstractItemModel *>(&d_func()->m_proxyModel);
-    const auto model = QVariant::fromValue(qaim);
-    QQuickTableView::setModel(model);
 }
 
 QQuickTreeView::~QQuickTreeView()
