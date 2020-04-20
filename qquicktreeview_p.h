@@ -30,7 +30,7 @@ public:
     int currentRow() const;
     void setCurrentRow(int row);
 
-    void keyReleaseEvent(QKeyEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
 
 signals:
     void currentRowChanged();

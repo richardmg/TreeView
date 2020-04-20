@@ -55,6 +55,7 @@ QQuickTreeView::QQuickTreeView(QQuickItem *parent)
 {
     Q_D(QQuickTreeView);
 
+    // QQuickTableView will only ever see the proxy model
     const auto proxy = QVariant::fromValue(std::addressof(d->m_proxyModel));
     d->QQuickTableViewPrivate::setModelImpl(proxy);
 
@@ -157,11 +158,8 @@ void QQuickTreeView::setCurrentRow(int row)
     emit currentRowChanged();
 }
 
-void QQuickTreeView::keyReleaseEvent(QKeyEvent *e)
+void QQuickTreeView::keyPressEvent(QKeyEvent *e)
 {
-    if (e->type() != QEvent::KeyRelease)
-        return;
-
     switch (e->key()) {
     case Qt::Key_Up:
         setCurrentRow(qMax(0, currentRow() - 1));
@@ -169,8 +167,11 @@ void QQuickTreeView::keyReleaseEvent(QKeyEvent *e)
     case Qt::Key_Down:
         setCurrentRow(qMin(rows() - 1, currentRow() + 1));
         break;
-    case Qt::Key_Space:
-        toggleExpanded(currentRow());
+    case Qt::Key_Left:
+        collapse(currentRow());
+        break;
+    case Qt::Key_Right:
+        expand(currentRow());
         break;
     default:
         break;
