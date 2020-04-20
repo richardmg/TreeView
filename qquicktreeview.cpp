@@ -9,26 +9,25 @@ QQuickTreeViewPrivate::~QQuickTreeViewPrivate()
 {
 }
 
-void QQuickTreeViewPrivate::setModelImpl(const QVariant &newModel)
+void QQuickTreeViewPrivate::syncModel()
 {
-    Q_Q(QQuickTreeView);
-
-    QVariant effectiveModelVariant = newModel;
+    QVariant effectiveModelVariant = assignedModel;
     if (effectiveModelVariant.userType() == qMetaTypeId<QJSValue>())
         effectiveModelVariant = effectiveModelVariant.value<QJSValue>().toVariant();
 
-    if (effectiveModelVariant.isNull()) {
-        m_proxyModel.setModel(nullptr);
-        return;
-    }
-
     const auto qaim = qobject_cast<QAbstractItemModel *>(qvariant_cast<QAbstractItemModel*>(effectiveModelVariant));
-    if (!qaim) {
-        qmlWarning(q) << "TreeView only accepts models of type QAbstractItemModel";
-        return;
-    }
 
-    m_proxyModel.setModel(qaim);
+    if (effectiveModelVariant.isNull())
+        m_proxyModel.setModel(nullptr);
+    else if (qaim)
+        m_proxyModel.setModel(qaim);
+    else
+        qmlWarning(q_func()) << "TreeView only accepts models of type QAbstractItemModel";
+
+    const auto tmp = assignedModel;
+    assignedModel = QVariant::fromValue(std::addressof(m_proxyModel));
+    QQuickTableViewPrivate::syncModel();
+    assignedModel = tmp;
 }
 
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)

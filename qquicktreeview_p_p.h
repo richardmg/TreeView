@@ -11,7 +11,7 @@ public:
     ~QQuickTreeViewPrivate() override;
     Q_DECLARE_PUBLIC(QQuickTreeView)
 
-    void setModelImpl(const QVariant &newModel) override;
+    void syncModel() override;
 
 private:
     QQuickTreeModelAdaptor1 m_proxyModel;
