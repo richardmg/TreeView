@@ -11,7 +11,6 @@ class QQuickTreeView : public QQuickTableView
 {
     Q_OBJECT
     Q_PROPERTY(int currentRow READ currentRow WRITE setCurrentRow NOTIFY currentRowChanged);
-    Q_PROPERTY(bool alternatingRowColors READ alternatingRowColors WRITE setAlternatingRowColors NOTIFY alternatingRowColorsChanged);
 
 public:
     QQuickTreeView(QQuickItem *parent = nullptr);
@@ -34,16 +33,12 @@ public:
     int currentRow() const;
     void setCurrentRow(int row);
 
-    bool alternatingRowColors() const;
-    void setAlternatingRowColors(bool alternatingRowColors);
-
     void keyPressEvent(QKeyEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
 
 signals:
     void currentRowChanged();
-    void alternatingRowColorsChanged();
     void expanded(int row);
     void collapsed(int row);
 

@@ -290,21 +290,6 @@ void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)
     toggleExpanded(row);
 }
 
-bool QQuickTreeView::alternatingRowColors() const
-{
-    return d_func()->m_alternatingRowColors;
-}
-
-void QQuickTreeView::setAlternatingRowColors(bool alternatingRowColors)
-{
-    Q_D(QQuickTreeView);
-    if (d->m_alternatingRowColors == alternatingRowColors)
-        return;
-
-    d->m_alternatingRowColors = alternatingRowColors;
-    emit alternatingRowColorsChanged();
-}
-
 #include "moc_qquicktreeview_p.cpp"
 
 QT_END_NAMESPACE
