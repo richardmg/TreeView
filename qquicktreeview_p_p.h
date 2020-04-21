@@ -19,11 +19,14 @@ public:
 
     void emitCurrentRowIfChanged();
 
+    qreal effectiveRowHeight(int row) const;
+    qreal effectiveColumnWidth(int column) const;
+
 public Q_SLOTS:
     void modelUpdated();
     void modelLayoutChanged(const QList<QPersistentModelIndex> &, QAbstractItemModel::LayoutChangeHint);
 
-private:
+public:
     // QQuickTreeModelAdaptor1 basically takes a tree model and flattens
     // it into a list (which will be displayed in the first column of
     // the table). Each node in the tree can have several columns of

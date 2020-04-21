@@ -61,6 +61,18 @@ void QQuickTreeViewPrivate::emitCurrentRowIfChanged()
     emit q_func()->currentRowChanged();
 }
 
+qreal QQuickTreeViewPrivate::effectiveRowHeight(int row) const
+{
+    // (copy from qquicktableview in Qt6)
+    return loadedTableItem(QPoint(leftColumn(), row))->geometry().height();
+}
+
+qreal QQuickTreeViewPrivate::effectiveColumnWidth(int column) const
+{
+    // (copy from qquicktableview in Qt6)
+    return loadedTableItem(QPoint(column, topRow()))->geometry().width();
+}
+
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
     : QQuickTableView(*(new QQuickTreeViewPrivate), parent)
 {
@@ -149,6 +161,69 @@ void QQuickTreeView::toggleExpanded(int row)
         collapse(row);
     else
         expand(row);
+}
+
+int QQuickTreeView::rowAtPos(int y, bool includeSpacing)
+{
+    // (copy from qquicktableview in Qt6)
+    Q_D(const QQuickTreeView);
+
+    if (!boundingRect().contains(QPointF(x(), y)))
+        return -1;
+
+    const qreal vSpace = d->cellSpacing.height();
+    qreal currentRowEnd = d->loadedTableOuterRect.y() - contentY();
+    int foundRow = -1;
+
+    for (auto const row : qAsConst(d->loadedRows).keys()) {
+        currentRowEnd += d->effectiveRowHeight(row);
+        if (y < currentRowEnd) {
+            foundRow = row;
+            break;
+        }
+        currentRowEnd += vSpace;
+        if (!includeSpacing && y < currentRowEnd) {
+            // Hit spacing
+            return -1;
+        }
+        if (includeSpacing && y < currentRowEnd - (vSpace / 2)) {
+            foundRow = row;
+            break;
+        }
+    }
+
+    return foundRow;
+}
+
+int QQuickTreeView::columnAtPos(int x, bool includeSpacing)
+{
+    // (copy from qquicktableview in Qt6)
+    Q_D(const QQuickTreeView);
+
+    if (!boundingRect().contains(QPointF(x, y())))
+        return -1;
+
+    const qreal hSpace = d->cellSpacing.width();
+    qreal currentColumnEnd = d->loadedTableOuterRect.x() - contentX();
+    int foundColumn = -1;
+
+    for (auto const column : qAsConst(d->loadedColumns).keys()) {
+        currentColumnEnd += d->effectiveColumnWidth(column);
+        if (x < currentColumnEnd) {
+            foundColumn = column;
+            break;
+        }
+        currentColumnEnd += hSpace;
+        if (!includeSpacing && x < currentColumnEnd) {
+            // Hit spacing
+            return -1;
+        } else if (includeSpacing && x < currentColumnEnd - (hSpace / 2)) {
+            foundColumn = column;
+            break;
+        }
+    }
+
+    return foundColumn;
 }
 
 QModelIndex QQuickTreeView::modelIndex(int row, int column)

@@ -26,6 +26,9 @@ public:
     Q_INVOKABLE void collapse(int row);
     Q_INVOKABLE void toggleExpanded(int row);
 
+    Q_INVOKABLE int columnAtPos(int x, bool includeSpacing);
+    Q_INVOKABLE int rowAtPos(int y, bool includeSpacing);
+
     Q_INVOKABLE QModelIndex modelIndex(int row, int column);
 
     void keyPressEvent(QKeyEvent *e) override;
