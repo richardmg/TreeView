@@ -14,29 +14,31 @@ T.TreeView {
                 implicitHeight: text.height
                 color: bgColor(row)
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: treeView.currentRow = row
+                Text {
+                    id: indicator
+                    x: treeView.depth(row) * 20
+                    text: {
+                        if (treeView.hasChildren(row))
+                            treeView.isExpanded(row) ? "▼" : "▶"
+                        else
+                            ""
+                    }
                 }
 
                 Text {
                     id: text
-                    x: treeView.depth(row) * 20
-                    text: {
-                        var text = "";
-                        if (treeView.hasChildren(row))
-                            text += treeView.isExpanded(row) ? "▼ " : "▶ "
-                        text += display
-                    }
+                    anchors.left: indicator.right
+                    anchors.leftMargin: 5
+                    text: display
+                }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            if (treeView.hasChildren(row))
-                                treeView.toggleExpanded(row)
-                            else
-                                treeView.currentRow = row
-                        }
+                MouseArea {
+                    anchors.fill: indicator
+                    onClicked: {
+                        if (treeView.hasChildren(row))
+                            treeView.toggleExpanded(row)
+                        else
+                            treeView.currentRow = row
                     }
                 }
             }
@@ -53,10 +55,6 @@ T.TreeView {
                     text: display
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: treeView.currentRow = row;
-                }
             }
         }
     }

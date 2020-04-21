@@ -272,6 +272,24 @@ void QQuickTreeView::keyPressEvent(QKeyEvent *e)
     }
 }
 
+void QQuickTreeView::mouseReleaseEvent(QMouseEvent *e)
+{
+    const int row = rowAtPos(e->pos().y(), true);
+    if (row == -1)
+        return;
+
+    setCurrentRow(row);
+}
+
+void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)
+{
+    const int row = rowAtPos(e->pos().y(), true);
+    if (row == -1)
+        return;
+
+    toggleExpanded(row);
+}
+
 bool QQuickTreeView::alternatingRowColors() const
 {
     return d_func()->m_alternatingRowColors;

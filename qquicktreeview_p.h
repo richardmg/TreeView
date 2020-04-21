@@ -31,13 +31,15 @@ public:
 
     Q_INVOKABLE QModelIndex modelIndex(int row, int column);
 
-    void keyPressEvent(QKeyEvent *e) override;
-
     int currentRow() const;
     void setCurrentRow(int row);
 
     bool alternatingRowColors() const;
     void setAlternatingRowColors(bool alternatingRowColors);
+
+    void keyPressEvent(QKeyEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void mouseDoubleClickEvent(QMouseEvent *e) override;
 
 signals:
     void currentRowChanged();
