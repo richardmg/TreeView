@@ -20,7 +20,6 @@ Window {
             model: fileSystemModel
             clip: true
             focus: true
-            onCurrentRowChanged: print(currentRow)
         }
     }
 }

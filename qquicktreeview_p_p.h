@@ -17,6 +17,8 @@ public:
     QVariant modelImpl() const override;
     void setModelImpl(const QVariant &newModel) override;
 
+    void emitCurrentRowIfChanged();
+
 public Q_SLOTS:
     void modelUpdated();
     void modelLayoutChanged(const QList<QPersistentModelIndex> &, QAbstractItemModel::LayoutChangeHint);
@@ -29,6 +31,7 @@ private:
     QQuickTreeModelAdaptor m_proxyModel;
     QVariant m_assignedModel;
     QPersistentModelIndex m_currentIndex;
+    int m_emittedCurrentRow = -1;
 };
 
 #endif // QQUICKTREEVIEW_P_H

@@ -47,6 +47,17 @@ void QQuickTreeViewPrivate::setModelImpl(const QVariant &newModel)
 
 void QQuickTreeViewPrivate::modelUpdated()
 {
+    emitCurrentRowIfChanged();
+}
+
+void QQuickTreeViewPrivate::emitCurrentRowIfChanged()
+{
+    // m_currentIndex is a QPersistentModelIndex which will update automatically, so
+    // we need this extra detour to check if is has changed after a model change.
+    if (m_emittedCurrentRow == m_currentIndex.row())
+        return;
+
+    m_emittedCurrentRow = m_currentIndex.row();
     emit q_func()->currentRowChanged();
 }
 
@@ -155,7 +166,7 @@ void QQuickTreeView::setCurrentRow(int row)
         return;
 
     d->m_currentIndex = d->m_proxyModel.index(row, 0);
-    emit currentRowChanged();
+    d->emitCurrentRowIfChanged();
 }
 
 void QQuickTreeView::keyPressEvent(QKeyEvent *e)
