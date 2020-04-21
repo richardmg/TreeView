@@ -5,6 +5,11 @@ import QtQuick.TreeView 2.15 as T
 T.TreeView {
     id: treeView
 
+    columnSpacing: 20
+
+    property color bgColor: "transparent"
+    property real indent: 20
+
     property Component indicator: Text {
         width: implicitWidth + 5
         text: {
@@ -20,69 +25,44 @@ T.TreeView {
         text: display2
     }
 
-    property Component icon
-
-    property Component info: Rectangle {
-        implicitWidth: text.width + 20
-        implicitHeight: text.height
-        color: bgColor(row2)
-        Text {
-            id: text
-            x: 10
-            text: display2
-        }
-    }
-
-    property Component background: Rectangle {
-        width: parent.width
-        height: parent.height
-        color: bgColor(row2)
-    }
-
-    property Item foreground
-
     delegate: DelegateChooser {
         DelegateChoice {
             column: 0 // the column where the tree is at
 
             Item {
-                implicitWidth: indicatorLoader.x + indicatorLoader.width + labelLoader.width
+                property int rowStartX: treeView.depth(row) * indent
+                implicitWidth: rowStartX + indicatorLoader.width + labelLoader.width
                 implicitHeight: Math.max(indicatorLoader.height, labelLoader.height)
 
                 Loader {
-                    id: backgroundLoader
+                    id: indicatorLoader
+                    x: rowStartX
+                    width: item.width
+                    height: item.height
                     property int row2: row
-                    sourceComponent: background
+                    sourceComponent: indicator
+                }
 
-                    Loader {
-                        id: indicatorLoader
-                        x: treeView.depth(row) * 20
-                        width: item.width
-                        height: item.height
-                        property int row2: row
-                        sourceComponent: indicator
-                    }
+                Loader {
+                    id: labelLoader
+                    x: rowStartX + indicatorLoader.width
+                    width: item.width
+                    height: item.height
+                    clip: true
+                    property int row2: row
+                    property string display2: display
+                    sourceComponent: label
+                }
 
-                    Loader {
-                        id: labelLoader
-                        x: indicatorLoader.x + indicatorLoader.width
-                        width: item.width
-                        height: item.height
-                        property int row2: row
-                        property string display2: display
-                        sourceComponent: label
-                    }
-
-                    MouseArea {
-                        x: indicatorLoader.x
-                        width: indicatorLoader.width
-                        height: indicatorLoader.height
-                        onClicked: {
-                            if (treeView.hasChildren(row))
-                                treeView.toggleExpanded(row)
-                            else
-                                treeView.currentRow = row
-                        }
+                MouseArea {
+                    x: indicatorLoader.x
+                    width: indicatorLoader.width
+                    height: indicatorLoader.height
+                    onClicked: {
+                        if (treeView.hasChildren(row))
+                            treeView.toggleExpanded(row)
+                        else
+                            treeView.currentRow = row
                     }
                 }
             }
@@ -96,7 +76,7 @@ T.TreeView {
                 property int row2: row
                 property int column2: column
                 property string display2: display
-                sourceComponent: info
+                sourceComponent: label
             }
         }
     }
