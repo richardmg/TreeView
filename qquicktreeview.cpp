@@ -123,7 +123,11 @@ void QQuickTreeView::expand(int row)
     if (row < 0 || row >= d->m_proxyModel.rowCount())
         return;
 
+    if (d->m_proxyModel.isExpanded(row))
+        return;
+
     d->m_proxyModel.expandRow(row);
+    emit expanded(row);
 }
 
 void QQuickTreeView::collapse(int row)
@@ -132,7 +136,11 @@ void QQuickTreeView::collapse(int row)
     if (row < 0 || row >= d->m_proxyModel.rowCount())
         return;
 
+    if (!d->m_proxyModel.isExpanded(row))
+        return;
+
     d_func()->m_proxyModel.collapseRow(row);
+    emit collapsed(row);
 }
 
 void QQuickTreeView::toggleExpanded(int row)
@@ -187,6 +195,21 @@ void QQuickTreeView::keyPressEvent(QKeyEvent *e)
     default:
         break;
     }
+}
+
+bool QQuickTreeView::alternatingRowColors() const
+{
+    return d_func()->m_alternatingRowColors;
+}
+
+void QQuickTreeView::setAlternatingRowColors(bool alternatingRowColors)
+{
+    Q_D(QQuickTreeView);
+    if (d->m_alternatingRowColors == alternatingRowColors)
+        return;
+
+    d->m_alternatingRowColors = alternatingRowColors;
+    emit alternatingRowColorsChanged();
 }
 
 #include "moc_qquicktreeview_p.cpp"

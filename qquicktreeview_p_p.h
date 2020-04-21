@@ -32,6 +32,7 @@ private:
     QVariant m_assignedModel;
     QPersistentModelIndex m_currentIndex;
     int m_emittedCurrentRow = -1;
+    bool m_alternatingRowColors = true;
 };
 
 #endif // QQUICKTREEVIEW_P_H

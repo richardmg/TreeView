@@ -64,7 +64,7 @@ T.TreeView {
     function bgColor(row) {
         if (row === treeView.currentRow)
             return Qt.rgba(0.9, 1, 0.9, 1)
-        else if (row % 2)
+        else if (row % 2 && treeView.alternatingRowColors)
             return Qt.rgba(0.8, 0.8, 1, 1)
         else
             return Qt.rgba(0.9, 0.9, 1, 1)
