@@ -6,12 +6,12 @@ T.TreeView {
     id: treeView
 
     property real indent: 20
-    property real columnSpacing: 10
+    property real columnSpacing: 15
     property color bgColorOdd: "transparent"
     property color bgColorEven: "transparent"
 
     property Component indicator: Text {
-        width: implicitWidth + 5
+        width: implicitWidth
         text: {
             if (treeView.hasChildren(row2))
                 treeView.isExpanded(row2) ? "▼ " : "▶"
@@ -20,8 +20,13 @@ T.TreeView {
         }
     }
 
-    property Component label: Text {
-        width: implicitWidth + 5
+    property Component treeLabel: Text {
+        width: implicitWidth
+        text: display2
+    }
+
+    property Component infoLabel: Text {
+        width: implicitWidth
         text: display2
     }
 
@@ -50,7 +55,7 @@ T.TreeView {
                     height: item.height
                     property int row2: row
                     property string display2: display
-                    sourceComponent: label
+                    sourceComponent: treeLabel
                 }
 
                 MouseArea {
@@ -79,7 +84,7 @@ T.TreeView {
                     property int row2: row
                     property int column2: column
                     property string display2: display
-                    sourceComponent: label
+                    sourceComponent: infoLabel
                 }
             }
         }
