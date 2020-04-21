@@ -5,7 +5,7 @@ import QtQuick.TreeView 2.15 as T
 T.TreeView {
     id: control
 
-    property real indent: 20
+    property real indent: 15
     property real columnSpacing: 10
     property color bgColorOdd: "transparent"
     property color bgColorEven: "transparent"
@@ -14,7 +14,7 @@ T.TreeView {
         width: implicitWidth
         text: {
             if (control.hasChildren(row2))
-                control.isExpanded(row2) ? "▼ " : "▶"
+                control.isExpanded(row2) ? "▼" : "▶"
             else
                 ""
         }
@@ -46,7 +46,7 @@ T.TreeView {
 
                 Loader {
                     id: labelLoader
-                    x: (control.depth(row) + 1) * indent
+                    x: Math.max(indicatorLoader.x + indicatorLoader.width + 5, (control.depth(row) + 1) * indent)
                     property int row2: row
                     property string display2: display
                     sourceComponent: treeLabel
