@@ -5,10 +5,10 @@ import QtQuick.TreeView 2.15 as T
 T.TreeView {
     id: treeView
 
-    columnSpacing: 20
-
-    property color bgColor: "transparent"
     property real indent: 20
+    property real columnSpacing: 10
+    property color bgColorOdd: "transparent"
+    property color bgColorEven: "transparent"
 
     property Component indicator: Text {
         width: implicitWidth + 5
@@ -29,14 +29,14 @@ T.TreeView {
         DelegateChoice {
             column: 0 // the column where the tree is at
 
-            Item {
-                property int rowStartX: treeView.depth(row) * indent
-                implicitWidth: rowStartX + indicatorLoader.width + labelLoader.width
+            Rectangle {
+                implicitWidth: indicatorLoader.x + indicatorLoader.width + labelLoader.width + columnSpacing
                 implicitHeight: Math.max(indicatorLoader.height, labelLoader.height)
+                color: row % 2 ? bgColorOdd : bgColorEven
 
                 Loader {
                     id: indicatorLoader
-                    x: rowStartX
+                    x: treeView.depth(row) * indent
                     width: item.width
                     height: item.height
                     property int row2: row
@@ -45,10 +45,9 @@ T.TreeView {
 
                 Loader {
                     id: labelLoader
-                    x: rowStartX + indicatorLoader.width
-                    width: item.width
+                    x: (treeView.depth(row) + 1) * indent
+                    width: item.width + columnSpacing
                     height: item.height
-                    clip: true
                     property int row2: row
                     property string display2: display
                     sourceComponent: label
@@ -69,14 +68,19 @@ T.TreeView {
         }
 
         DelegateChoice {
-            Loader {
-                id: infoLoader
-                width: item.width
-                height: item.height
-                property int row2: row
-                property int column2: column
-                property string display2: display
-                sourceComponent: label
+            Rectangle {
+                implicitWidth: infoLoader.x + infoLoader.width
+                color: row % 2 ? bgColorOdd : bgColorEven
+                Loader {
+                    id: infoLoader
+                    x: columnSpacing
+                    width: item.width
+                    height: item.height
+                    property int row2: row
+                    property int column2: column
+                    property string display2: display
+                    sourceComponent: label
+                }
             }
         }
     }
