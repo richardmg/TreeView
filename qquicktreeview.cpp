@@ -6,6 +6,24 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlproperty int QtQuick::TreeView::currentRow
+
+    This property holds the row that has been selected as current. Selecting
+    a row to be current is done by either using the arrow keys, clicking on a row
+    with the mouse, or assign a value to it explicitly.
+
+    \note \c currentRow holds the row number as shown in the view (counting from the
+    root node, as if the tree model was a flat structure). It is not the same as a
+    row in the model, which is always relative to the parent node. To get the
+    corresponding row in the model, use \l modelIndex():
+    \code
+    var index = modelIndex(currentRow, 0).row;
+    \endcode
+
+    \sa modelIndex()
+*/
+
 QQuickTreeViewPrivate::QQuickTreeViewPrivate()
     : QQuickTableViewPrivate()
 {
