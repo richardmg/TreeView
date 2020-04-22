@@ -31,7 +31,8 @@ T.TreeView {
 
     delegate: DelegateChooser {
         DelegateChoice {
-            column: 0 // the column where the tree is at
+            // The column where the tree is at
+            column: 0
 
             Rectangle {
                 implicitWidth: labelLoader.x + indicatorLoader.width + labelLoader.width + columnSpacing
@@ -68,6 +69,7 @@ T.TreeView {
         }
 
         DelegateChoice {
+            //  All the other columns
             Rectangle {
                 implicitWidth: infoLoader.x + infoLoader.width
                 color: bgColor(row)
