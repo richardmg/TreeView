@@ -6,7 +6,7 @@ T.TreeView {
     id: control
 
     property real indent: 15
-    property real columnSpacing: 10
+    property real columnPadding: 20
     property color bgColorOdd: "transparent"
     property color bgColorEven: "transparent"
     property color bgColorCurrent: Qt.rgba(0.8, 0.8, 0.8)
@@ -35,7 +35,7 @@ T.TreeView {
             column: 0
 
             Rectangle {
-                implicitWidth: labelLoader.x + indicatorLoader.width + labelLoader.width + columnSpacing
+                implicitWidth: labelLoader.x + labelLoader.width + columnPadding
                 implicitHeight: Math.max(indicatorLoader.height, labelLoader.height)
                 color: bgColor(row)
 
@@ -75,7 +75,7 @@ T.TreeView {
                 color: bgColor(row)
                 Loader {
                     id: infoLoader
-                    x: columnSpacing
+                    x: columnPadding
                     property int row2: row
                     property int column2: column
                     property string display2: display
