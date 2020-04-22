@@ -35,7 +35,7 @@ T.TreeView {
             column: 0
 
             Rectangle {
-                implicitWidth: labelLoader.x + labelLoader.width + columnPadding
+                implicitWidth: labelLoader.x + labelLoader.width + (columnPadding / 2)
                 implicitHeight: Math.max(indicatorLoader.height, labelLoader.height)
                 color: bgColor(row)
 
@@ -71,11 +71,11 @@ T.TreeView {
         DelegateChoice {
             //  All the other columns
             Rectangle {
-                implicitWidth: infoLoader.x + infoLoader.width
+                implicitWidth: infoLoader.x + infoLoader.width + (columnPadding / 2)
                 color: bgColor(row)
                 Loader {
                     id: infoLoader
-                    x: columnPadding
+                    x: columnPadding / 2
                     property int row2: row
                     property int column2: column
                     property string display2: display
