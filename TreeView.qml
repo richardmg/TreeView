@@ -9,6 +9,7 @@ T.TreeView {
     property real columnSpacing: 10
     property color bgColorOdd: "transparent"
     property color bgColorEven: "transparent"
+    property color bgColorCurrent: Qt.rgba(0.8, 0.8, 0.8)
 
     property Component indicator: Text {
         width: implicitWidth
@@ -35,7 +36,7 @@ T.TreeView {
             Rectangle {
                 implicitWidth: labelLoader.x + indicatorLoader.width + labelLoader.width + columnSpacing
                 implicitHeight: Math.max(indicatorLoader.height, labelLoader.height)
-                color: row % 2 ? bgColorOdd : bgColorEven
+                color: bgColor(row)
 
                 Loader {
                     id: indicatorLoader
@@ -69,7 +70,7 @@ T.TreeView {
         DelegateChoice {
             Rectangle {
                 implicitWidth: infoLoader.x + infoLoader.width
-                color: row % 2 ? bgColorOdd : bgColorEven
+                color: bgColor(row)
                 Loader {
                     id: infoLoader
                     x: columnSpacing
@@ -80,5 +81,14 @@ T.TreeView {
                 }
             }
         }
+    }
+
+    function bgColor(row) {
+        if (treeView.currentRow === row)
+            return bgColorCurrent
+        else if (row % 2)
+            return bgColorOdd
+        else
+            return bgColorEven
     }
 }
