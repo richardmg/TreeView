@@ -33,7 +33,7 @@ public:
     // data in the model, which we show in the remaining columns of the table.
     QQuickTreeModelAdaptor m_proxyModel;
     QVariant m_assignedModel;
-    QPersistentModelIndex m_currentIndex;
+    QPersistentModelIndex m_currentProxyIndex;
     int m_emittedCurrentRow = -1;
     bool m_alternatingRowColors = true;
 };

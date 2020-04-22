@@ -54,10 +54,10 @@ void QQuickTreeViewPrivate::emitCurrentRowIfChanged()
 {
     // m_currentIndex is a QPersistentModelIndex which will update automatically, so
     // we need this extra detour to check if is has changed after a model change.
-    if (m_emittedCurrentRow == m_currentIndex.row())
+    if (m_emittedCurrentRow == m_currentProxyIndex.row())
         return;
 
-    m_emittedCurrentRow = m_currentIndex.row();
+    m_emittedCurrentRow = m_currentProxyIndex.row();
     emit q_func()->currentRowChanged();
 }
 
@@ -239,16 +239,16 @@ QModelIndex QQuickTreeView::modelIndex(int row, int column)
 
 int QQuickTreeView::currentRow() const
 {
-    return d_func()->m_currentIndex.row();
+    return d_func()->m_currentProxyIndex.row();
 }
 
 void QQuickTreeView::setCurrentRow(int row)
 {
     Q_D(QQuickTreeView);
-    if (d->m_currentIndex.row() == row)
+    if (d->m_currentProxyIndex.row() == row)
         return;
 
-    d->m_currentIndex = d->m_proxyModel.index(row, 0);
+    d->m_currentProxyIndex = d->m_proxyModel.index(row, 0);
     d->emitCurrentRowIfChanged();
 }
 

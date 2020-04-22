@@ -21,8 +21,8 @@ Window {
             clip: true
             focus: true
             Keys.onReturnPressed: {
-                var index = treeView.modelIndex(currentRow, 0);
-                var label = fileSystemModel.data(index, treeView.textRole)
+                var index = modelIndex(currentRow, 0);
+                var label = model.data(index, treeView.textRole)
                 print("selected:", label)
             }
         }
