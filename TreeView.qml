@@ -11,7 +11,7 @@ T.TreeView {
     property color bgColorEven: "transparent"
     property color bgColorCurrent: Qt.rgba(0.8, 0.8, 0.8)
 
-    property Component indicator: Text {
+    indicator: Text {
         width: implicitWidth
         text: {
             if (control.hasChildren(row2))

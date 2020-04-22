@@ -11,6 +11,7 @@ class QQuickTreeView : public QQuickTableView
 {
     Q_OBJECT
     Q_PROPERTY(int currentRow READ currentRow WRITE setCurrentRow NOTIFY currentRowChanged);
+    Q_PROPERTY(QQmlComponent *indicator READ indicator WRITE setIndicator NOTIFY indicatorChanged)
 
 public:
     QQuickTreeView(QQuickItem *parent = nullptr);
@@ -37,10 +38,14 @@ public:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
 
+    QQmlComponent * indicator() const;
+    void setIndicator(QQmlComponent * indicator);
+
 signals:
     void currentRowChanged();
     void expanded(int row);
     void collapsed(int row);
+    void indicatorChanged();
 
 private:
     Q_DISABLE_COPY(QQuickTreeView)

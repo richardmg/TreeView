@@ -36,6 +36,7 @@ public:
     QPersistentModelIndex m_currentProxyIndex;
     int m_emittedCurrentRow = -1;
     bool m_alternatingRowColors = true;
+    QQmlComponent *m_indicator = nullptr;
 };
 
 #endif // QQUICKTREEVIEW_P_H
