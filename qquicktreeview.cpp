@@ -234,7 +234,7 @@ QModelIndex QQuickTreeView::modelIndex(int row, int column)
     if (!index.isValid())
         return index;
 
-    return d_func()->m_proxyModel.mapToModel(index);
+    return d->m_proxyModel.mapToModel(index);
 }
 
 int QQuickTreeView::currentRow() const
