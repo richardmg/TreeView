@@ -7,13 +7,12 @@ T.TreeView {
 
     property real indent: 15
     property real columnPadding: 20
+    property real labelOffset: 12
     property color bgColorOdd: "transparent"
     property color bgColorEven: "transparent"
     property color bgColorCurrent: Qt.rgba(0.8, 0.8, 0.8)
 
     indicator: Text {
-        id: indicatorItem
-        width: implicitWidth
         text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
     }
 
@@ -42,6 +41,7 @@ T.TreeView {
                 Loader {
                     id: indicatorLoader
                     x: control.depth(row) * indent
+                    width: labelOffset
                     property int row: rowCpy
                     property bool hasChildren: hasChildrenCpy
                     property bool isExpanded: isExpandedCpy

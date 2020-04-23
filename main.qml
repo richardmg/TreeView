@@ -25,11 +25,6 @@ Window {
             bgColorEven: "white"
             bgColorOdd: bgColorEven
 
-            indicator: Text {
-                width: implicitWidth
-                text: hasChildren ? (isExpanded ? "[-]xxxxx" : "[+]") : ""
-            }
-
             Keys.onReturnPressed: {
                 var modelIndex = mapToModel(currentViewIndex);
                 var label = model.data(modelIndex, treeView.textRole)
