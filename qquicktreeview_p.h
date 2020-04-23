@@ -6,6 +6,7 @@
 QT_BEGIN_NAMESPACE
 
 class QQuickTreeViewPrivate;
+class QQuickTreeViewAttached;
 
 class QQuickTreeView : public QQuickTableView
 {
@@ -16,7 +17,7 @@ class QQuickTreeView : public QQuickTableView
 
     QML_NAMED_ELEMENT(TreeView)
     QML_ADDED_IN_MINOR_VERSION(15)
-    QML_ATTACHED(QQuickTableViewAttached)
+    QML_ATTACHED(QQuickTreeViewAttached)
 
 public:
     QQuickTreeView(QQuickItem *parent = nullptr);
@@ -48,6 +49,8 @@ public:
     QQmlComponent * indicator() const;
     void setIndicator(QQmlComponent * indicator);
 
+    static QQuickTreeViewAttached *qmlAttachedProperties(QObject *obj);
+
 signals:
     void currentViewIndexChanged();
     void expanded(int row);
@@ -57,6 +60,36 @@ signals:
 private:
     Q_DISABLE_COPY(QQuickTreeView)
     Q_DECLARE_PRIVATE(QQuickTreeView)
+};
+
+class QQuickTreeViewAttached : public QQuickTableViewAttached
+{
+    Q_OBJECT
+    Q_PROPERTY(QQuickTreeView *view READ view NOTIFY viewChanged)
+    Q_PROPERTY(bool hasChildren READ hasChildren NOTIFY hasChildrenChanged)
+    Q_PROPERTY(bool isExpanded READ isExpanded NOTIFY isExpandedChanged)
+
+public:
+    QQuickTreeViewAttached(QObject *parent) : QQuickTableViewAttached(parent) {}
+    QQuickTreeView *view() const { return m_view; }
+
+    bool hasChildren() const;
+    void setHasChildren(bool hasChildren);
+
+    bool isExpanded() const;
+    void setIsExpanded(bool isExpanded);
+
+Q_SIGNALS:
+    void viewChanged();
+    void hasChildrenChanged();
+    void isExpandedChanged();
+
+private:
+    QPointer<QQuickTreeView> m_view;
+    bool m_hasChildren;
+    bool m_isExpanded;
+
+    friend class QQuickTreeViewPrivate;
 };
 
 QT_END_NAMESPACE

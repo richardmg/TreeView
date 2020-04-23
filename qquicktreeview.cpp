@@ -1,4 +1,6 @@
 #include <QtCore/qobject.h>
+#include <QtQml/qqmlcontext.h>
+
 #include "qquicktreeview_p.h"
 #include "qquicktreemodeladaptor_p.h"
 
@@ -44,8 +46,6 @@ void QQuickTreeViewPrivate::setModelImpl(const QVariant &newModel)
 
     if (newModel == m_assignedModel)
         return;
-    QObjectPrivate::connect(&m_proxyModel, &QAbstractItemModel::rowsInserted, this, &QQuickTreeViewPrivate::modelUpdated);
-    QObjectPrivate::connect(&m_proxyModel, &QAbstractItemModel::rowsRemoved, this, &QQuickTreeViewPrivate::modelUpdated);
 
     m_assignedModel = newModel;
     QVariant effectiveModel = m_assignedModel;
@@ -59,8 +59,24 @@ void QQuickTreeViewPrivate::setModelImpl(const QVariant &newModel)
     else
         qmlWarning(q) << "treeView only accept models of type QAbstractItemModel";
 
+
     scheduleRebuildTable(QQuickTableViewPrivate::RebuildOption::All);
     emit q->modelChanged();
+}
+
+void QQuickTreeViewPrivate::syncModel()
+{
+    if (model) {
+        QObjectPrivate::disconnect(model, &QQmlInstanceModel::initItem, this, &QQuickTreeViewPrivate::initItemCallback);
+        QObjectPrivate::disconnect(model, &QQmlInstanceModel::itemReused, this, &QQuickTreeViewPrivate::itemReusedCallback);
+    }
+
+    QQuickTableViewPrivate::syncModel();
+
+    if (model) {
+        QObjectPrivate::connect(model, &QQmlInstanceModel::initItem, this, &QQuickTreeViewPrivate::initItemCallback);
+        QObjectPrivate::connect(model, &QQmlInstanceModel::itemReused, this, &QQuickTreeViewPrivate::itemReusedCallback);
+    }
 }
 
 void QQuickTreeViewPrivate::modelUpdated()
@@ -76,6 +92,47 @@ void QQuickTreeViewPrivate::emitModelChanges()
         m_currentViewIndexEmitted = m_currentViewIndex;
         emit q_func()->currentViewIndexChanged();
     }
+}
+
+QQuickTreeViewAttached *QQuickTreeViewPrivate::getAttachedObject(const QObject *object) const
+{
+    QObject *attachedObject = qmlAttachedPropertiesObject<QQuickTreeView>(object);
+    return static_cast<QQuickTreeViewAttached *>(attachedObject);
+}
+
+void QQuickTreeViewPrivate::initItemCallback(int modelIndex, QObject *object)
+{
+    Q_UNUSED(modelIndex);
+    Q_Q(QQuickTreeView);
+
+    if (auto attached = getAttachedObject(object)) {
+        const auto context = qmlContext(object);
+        const int row = context->contextProperty("row").toInt();
+        attached->setIsExpanded(q->isExpanded(row));
+        attached->setHasChildren(q->hasChildren(row));
+    }
+}
+
+void QQuickTreeViewPrivate::itemReusedCallback(int modelIndex, QObject *object)
+{
+    Q_UNUSED(modelIndex);
+    Q_Q(QQuickTreeView);
+
+    if (auto attached = getAttachedObject(object)) {
+        const auto context = qmlContext(object);
+        const int row = context->contextProperty("row").toInt();
+        attached->setIsExpanded(q->isExpanded(row));
+        attached->setHasChildren(q->hasChildren(row));
+    }
+}
+
+QQuickItem *QQuickTreeViewPrivate::itemAtCell(const QPoint &cell) const
+{
+    // (copy from qquicktableview in Qt6)
+    const int modelIndex = modelIndexAtCell(cell);
+    if (!loadedItems.contains(modelIndex))
+        return nullptr;
+    return loadedItems.value(modelIndex)->item;
 }
 
 qreal QQuickTreeViewPrivate::effectiveRowHeight(int row) const
@@ -152,6 +209,12 @@ void QQuickTreeView::expand(int row)
         return;
 
     d->m_proxyModel.expandRow(row);
+
+    if (const auto delegateItem = d->itemAtCell(QPoint(0, row))) {
+        if (auto attached = d->getAttachedObject(delegateItem))
+            attached->setIsExpanded(true);
+    }
+
     emit expanded(row);
 }
 
@@ -165,6 +228,12 @@ void QQuickTreeView::collapse(int row)
         return;
 
     d_func()->m_proxyModel.collapseRow(row);
+
+    if (const auto delegateItem = d->itemAtCell(QPoint(0, row))) {
+        if (auto attached = d->getAttachedObject(delegateItem))
+            attached->setIsExpanded(false);
+    }
+
     emit collapsed(row);
 }
 
@@ -290,10 +359,13 @@ void QQuickTreeView::keyPressEvent(QKeyEvent *e)
         d->moveCurrentViewIndex(0, 1);
         break;
     case Qt::Key_Left:
-        collapse(d->m_currentViewIndex.row());
+        d->moveCurrentViewIndex(-1, 0);
         break;
     case Qt::Key_Right:
-        expand(d->m_currentViewIndex.row());
+        d->moveCurrentViewIndex(1, 0);
+        break;
+    case Qt::Key_Space:
+        toggleExpanded(d->m_currentViewIndex.row());
         break;
     default:
         break;
@@ -332,6 +404,39 @@ void QQuickTreeView::setIndicator(QQmlComponent *indicator)
 
     d->m_indicator = indicator;
     emit indicatorChanged();
+}
+
+QQuickTreeViewAttached *QQuickTreeView::qmlAttachedProperties(QObject *obj)
+{
+    return new QQuickTreeViewAttached(obj);
+}
+
+bool QQuickTreeViewAttached::hasChildren() const
+{
+    return m_hasChildren;
+}
+
+void QQuickTreeViewAttached::setHasChildren(bool hasChildren)
+{
+    if (m_hasChildren == hasChildren)
+        return;
+
+    m_hasChildren = hasChildren;
+    emit hasChildrenChanged();
+}
+
+bool QQuickTreeViewAttached::isExpanded() const
+{
+    return m_isExpanded;
+}
+
+void QQuickTreeViewAttached::setIsExpanded(bool isExpanded)
+{
+    if (m_isExpanded == isExpanded)
+        return;
+
+    m_isExpanded = isExpanded;
+    emit isExpandedChanged();
 }
 
 #include "moc_qquicktreeview_p.cpp"

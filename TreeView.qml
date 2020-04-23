@@ -12,13 +12,9 @@ T.TreeView {
     property color bgColorCurrent: Qt.rgba(0.8, 0.8, 0.8)
 
     indicator: Text {
+        id: indicatorItem
         width: implicitWidth
-        text: {
-            if (control.hasChildren(row2))
-                control.isExpanded(row2) ? "▼" : "▶"
-            else
-                ""
-        }
+        text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
     }
 
     property Component treeLabel: Text {
@@ -37,12 +33,18 @@ T.TreeView {
             Rectangle {
                 implicitWidth: labelLoader.x + labelLoader.width + (columnPadding / 2)
                 implicitHeight: Math.max(indicatorLoader.height, labelLoader.height)
-                color: bgColor(row)
+                color: bgColor(column, row)
+
+                property int rowCpy: row
+                property bool isExpandedCpy: TreeView.isExpanded
+                property bool hasChildrenCpy: TreeView.hasChildren
 
                 Loader {
                     id: indicatorLoader
                     x: control.depth(row) * indent
-                    property int row2: row
+                    property int row: rowCpy
+                    property bool hasChildren: hasChildrenCpy
+                    property bool isExpanded: isExpandedCpy
                     sourceComponent: indicator
                 }
 
@@ -72,7 +74,7 @@ T.TreeView {
             //  All the other columns
             Rectangle {
                 implicitWidth: infoLoader.x + infoLoader.width + (columnPadding / 2)
-                color: bgColor(row)
+                color: bgColor(column, row)
                 Loader {
                     id: infoLoader
                     x: columnPadding / 2
@@ -85,8 +87,8 @@ T.TreeView {
         }
     }
 
-    function bgColor(row) {
-        if (treeView.currentViewIndex.row === row)
+    function bgColor(column, row) {
+        if (treeView.currentViewIndex.row === row && treeView.currentViewIndex.column === column)
             return bgColorCurrent
         else if (row % 2)
             return bgColorOdd

@@ -16,13 +16,19 @@ public:
 
     QVariant modelImpl() const override;
     void setModelImpl(const QVariant &newModel) override;
+    void syncModel() override;
 
     void emitModelChanges();
 
+    QQuickItem *itemAtCell(const QPoint &cell) const;
     qreal effectiveRowHeight(int row) const;
     qreal effectiveColumnWidth(int column) const;
 
     void moveCurrentViewIndex(int directionX, int directionY);
+    QQuickTreeViewAttached *getAttachedObject(const QObject *object) const;
+
+    void initItemCallback(int modelIndex, QObject *object);
+    void itemReusedCallback(int modelIndex, QObject *object);
 
 public Q_SLOTS:
     void modelUpdated();

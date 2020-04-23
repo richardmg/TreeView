@@ -24,11 +24,18 @@ Window {
             columnSpacing: 1
             bgColorEven: "white"
             bgColorOdd: bgColorEven
+
+            indicator: Text {
+                width: implicitWidth
+                text: hasChildren ? (isExpanded ? "[-]xxxxx" : "[+]") : ""
+            }
+
             Keys.onReturnPressed: {
                 var modelIndex = mapToModel(currentViewIndex);
                 var label = model.data(modelIndex, treeView.textRole)
                 print("selected:", label)
             }
+
             Keys.onTabPressed: {
                 var rootIndex = fileSystemModel.index(0, 0)
                 var parentIndex = fileSystemModel.index(1, 0, rootIndex)
