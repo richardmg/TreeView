@@ -10,7 +10,7 @@ class QQuickTreeViewPrivate;
 class QQuickTreeView : public QQuickTableView
 {
     Q_OBJECT
-    Q_PROPERTY(int currentRow READ currentRow WRITE setCurrentRow NOTIFY currentRowChanged);
+    Q_PROPERTY(QModelIndex currentViewIndex READ currentViewIndex WRITE setCurrentViewIndex NOTIFY currentViewIndexChanged);
     Q_PROPERTY(QQmlComponent *indicator READ indicator WRITE setIndicator NOTIFY indicatorChanged)
 
 public:
@@ -29,10 +29,12 @@ public:
     Q_INVOKABLE int columnAtPos(int x, bool includeSpacing);
     Q_INVOKABLE int rowAtPos(int y, bool includeSpacing);
 
-    Q_INVOKABLE QModelIndex modelIndex(int row, int column);
+    Q_INVOKABLE QModelIndex viewIndex(int column, int row);
+    Q_INVOKABLE QModelIndex mapToModel(const QModelIndex &viewIndex);
+    Q_INVOKABLE QModelIndex mapFromModel(const QModelIndex &modelIndex);
 
-    int currentRow() const;
-    void setCurrentRow(int row);
+    QModelIndex currentViewIndex() const;
+    void setCurrentViewIndex(const QModelIndex &viewIndex);
 
     void keyPressEvent(QKeyEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
@@ -42,7 +44,7 @@ public:
     void setIndicator(QQmlComponent * indicator);
 
 signals:
-    void currentRowChanged();
+    void currentViewIndexChanged();
     void expanded(int row);
     void collapsed(int row);
     void indicatorChanged();

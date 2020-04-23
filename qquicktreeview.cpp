@@ -65,18 +65,17 @@ void QQuickTreeViewPrivate::setModelImpl(const QVariant &newModel)
 
 void QQuickTreeViewPrivate::modelUpdated()
 {
-    emitCurrentRowIfChanged();
+    emitModelChanges();
 }
 
-void QQuickTreeViewPrivate::emitCurrentRowIfChanged()
+void QQuickTreeViewPrivate::emitModelChanges()
 {
     // m_currentIndex is a QPersistentModelIndex which will update automatically, so
     // we need this extra detour to check if is has changed after a model change.
-    if (m_emittedCurrentRow == m_currentProxyIndex.row())
-        return;
-
-    m_emittedCurrentRow = m_currentProxyIndex.row();
-    emit q_func()->currentRowChanged();
+    if (m_currentViewIndexEmitted != m_currentViewIndex) {
+        m_currentViewIndexEmitted = m_currentViewIndex;
+        emit q_func()->currentViewIndexChanged();
+    }
 }
 
 qreal QQuickTreeViewPrivate::effectiveRowHeight(int row) const
@@ -150,7 +149,7 @@ int QQuickTreeView::depth(int row) const
 void QQuickTreeView::expand(int row)
 {
     Q_D(QQuickTreeView);
-    if (row < 0 || row >= d->m_proxyModel.rowCount())
+    if (row < 0 || row >= rows())
         return;
 
     if (d->m_proxyModel.isExpanded(row))
@@ -244,46 +243,61 @@ int QQuickTreeView::columnAtPos(int x, bool includeSpacing)
     return foundColumn;
 }
 
-QModelIndex QQuickTreeView::modelIndex(int row, int column)
+QModelIndex QQuickTreeView::viewIndex(int column, int row)
 {
-    Q_D(QQuickTreeView);
-
-    const QModelIndex index = d->m_proxyModel.index(row, column);
-    if (!index.isValid())
-        return index;
-
-    return d->m_proxyModel.mapToModel(index);
+    return d_func()->m_proxyModel.index(row, column);
 }
 
-int QQuickTreeView::currentRow() const
+QModelIndex QQuickTreeView::mapToModel(const QModelIndex &viewIndex)
 {
-    return d_func()->m_currentProxyIndex.row();
+    return d_func()->m_proxyModel.mapToModel(viewIndex);
 }
 
-void QQuickTreeView::setCurrentRow(int row)
+QModelIndex QQuickTreeView::mapFromModel(const QModelIndex &modelIndex)
+{
+    return d_func()->m_proxyModel.mapToModel(modelIndex);
+}
+
+QModelIndex QQuickTreeView::currentViewIndex() const
+{
+    return d_func()->m_currentViewIndex;
+}
+
+void QQuickTreeView::setCurrentViewIndex(const QModelIndex &viewIndex)
 {
     Q_D(QQuickTreeView);
-    if (d->m_currentProxyIndex.row() == row)
+    if (d->m_currentViewIndex == viewIndex)
         return;
 
-    d->m_currentProxyIndex = d->m_proxyModel.index(row, 0);
-    d->emitCurrentRowIfChanged();
+    d->m_currentViewIndex = viewIndex;
+    d->m_currentViewIndexEmitted = viewIndex;
+    emit currentViewIndexChanged();
+}
+
+void QQuickTreeViewPrivate::moveCurrentViewIndex(int directionX, int directionY)
+{
+    Q_Q(QQuickTreeView);
+    const int row = qBound(0, m_currentViewIndex.row() + directionY, q->rows() - 1);
+    const int column = qBound(0, m_currentViewIndex.column() + directionX, q->columns() - 1);
+    q->setCurrentViewIndex(q->viewIndex(column, row));
 }
 
 void QQuickTreeView::keyPressEvent(QKeyEvent *e)
 {
+    Q_D(QQuickTreeView);
+
     switch (e->key()) {
     case Qt::Key_Up:
-        setCurrentRow(qMax(0, currentRow() - 1));
+        d->moveCurrentViewIndex(0, -1);
         break;
     case Qt::Key_Down:
-        setCurrentRow(qMin(rows() - 1, currentRow() + 1));
+        d->moveCurrentViewIndex(0, 1);
         break;
     case Qt::Key_Left:
-        collapse(currentRow());
+        collapse(d->m_currentViewIndex.row());
         break;
     case Qt::Key_Right:
-        expand(currentRow());
+        expand(d->m_currentViewIndex.row());
         break;
     default:
         break;
@@ -292,11 +306,12 @@ void QQuickTreeView::keyPressEvent(QKeyEvent *e)
 
 void QQuickTreeView::mouseReleaseEvent(QMouseEvent *e)
 {
+    const int column = columnAtPos(e->pos().x(), true);
     const int row = rowAtPos(e->pos().y(), true);
-    if (row == -1)
+    if (column == -1 || row == -1)
         return;
 
-    setCurrentRow(row);
+    setCurrentViewIndex(viewIndex(column, row));
 }
 
 void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)

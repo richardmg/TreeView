@@ -62,7 +62,7 @@ T.TreeView {
                         if (control.hasChildren(row))
                             control.toggleExpanded(row)
                         else
-                            control.currentRow = row
+                            control.currentViewIndex.row = row
                     }
                 }
             }
@@ -86,7 +86,7 @@ T.TreeView {
     }
 
     function bgColor(row) {
-        if (treeView.currentRow === row)
+        if (treeView.currentViewIndex.row === row)
             return bgColorCurrent
         else if (row % 2)
             return bgColorOdd

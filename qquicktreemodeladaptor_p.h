@@ -100,6 +100,7 @@ public:
     bool childrenVisible(const QModelIndex &index);
 
     QModelIndex mapToModel(const QModelIndex &index) const;
+    QModelIndex mapFromModel(const QModelIndex &index) const;
     QModelIndex mapToModel(int row) const;
 
     Q_INVOKABLE QItemSelection selectionForRowRange(const QModelIndex &fromIndex, const QModelIndex &toIndex) const;

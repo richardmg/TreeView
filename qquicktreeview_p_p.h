@@ -17,10 +17,12 @@ public:
     QVariant modelImpl() const override;
     void setModelImpl(const QVariant &newModel) override;
 
-    void emitCurrentRowIfChanged();
+    void emitModelChanges();
 
     qreal effectiveRowHeight(int row) const;
     qreal effectiveColumnWidth(int column) const;
+
+    void moveCurrentViewIndex(int directionX, int directionY);
 
 public Q_SLOTS:
     void modelUpdated();
@@ -33,9 +35,8 @@ public:
     // data in the model, which we show in the remaining columns of the table.
     QQuickTreeModelAdaptor m_proxyModel;
     QVariant m_assignedModel;
-    QPersistentModelIndex m_currentProxyIndex;
-    int m_emittedCurrentRow = -1;
-    bool m_alternatingRowColors = true;
+    QPersistentModelIndex m_currentViewIndex;
+    QModelIndex m_currentViewIndexEmitted;
     QQmlComponent *m_indicator = nullptr;
 };
 

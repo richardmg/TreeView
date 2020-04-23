@@ -223,6 +223,22 @@ QModelIndex QQuickTreeModelAdaptor::mapToModel(const QModelIndex &index) const
     return m_model->index(sourceIndex.row(), index.column(), sourceIndex.parent());
 }
 
+QModelIndex QQuickTreeModelAdaptor::mapFromModel(const QModelIndex &index) const
+{
+    int row = -1;
+    for (int i = 0; i < m_items.count(); ++i) {
+        if (m_items[i].index == index) {
+            row = i;
+            break;
+        }
+    }
+
+    if (row == -1)
+        return QModelIndex();
+
+    return this->index(row, index.column());
+}
+
 QModelIndex QQuickTreeModelAdaptor::mapToModel(int row) const
 {
     if (row < 0 || row >= m_items.count())

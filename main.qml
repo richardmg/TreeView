@@ -25,9 +25,15 @@ Window {
             bgColorEven: "white"
             bgColorOdd: bgColorEven
             Keys.onReturnPressed: {
-                var index = modelIndex(currentRow, 0);
-                var label = model.data(index, treeView.textRole)
+                var modelIndex = mapToModel(viewIndex(0, currentRow));
+                var label = model.data(modelIndex, treeView.textRole)
                 print("selected:", label)
+            }
+            Keys.onTabPressed: {
+                var parentIndex = fileSystemModel.index(0, 0)
+                var childIndex = fileSystemModel.index(1, 0, parentIndex)
+                print(childIndex.row)
+                currentViewIndex = mapFromModel(childIndex)
             }
         }
     }
