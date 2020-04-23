@@ -11,7 +11,7 @@ Window {
     Rectangle {
         anchors.fill: parent
         anchors.margins: 10
-        color: Qt.rgba(0.9, 0.9, 0.9, 1)
+        color: "black"//Qt.rgba(0.9, 0.9, 0.9, 1)
 
         TreeView {
             id: treeView
@@ -20,6 +20,10 @@ Window {
             model: fileSystemModel
             clip: true
             focus: true
+            rowSpacing: 1
+            columnSpacing: 1
+            bgColorEven: "white"
+            bgColorOdd: bgColorEven
             Keys.onReturnPressed: {
                 var index = modelIndex(currentRow, 0);
                 var label = model.data(index, treeView.textRole)
