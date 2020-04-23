@@ -255,7 +255,7 @@ QModelIndex QQuickTreeView::mapToModel(const QModelIndex &viewIndex)
 
 QModelIndex QQuickTreeView::mapFromModel(const QModelIndex &modelIndex)
 {
-    return d_func()->m_proxyModel.mapToModel(modelIndex);
+    return d_func()->m_proxyModel.mapFromModel(modelIndex);
 }
 
 QModelIndex QQuickTreeView::currentViewIndex() const
