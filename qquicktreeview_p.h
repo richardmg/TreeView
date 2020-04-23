@@ -86,8 +86,8 @@ Q_SIGNALS:
 
 private:
     QPointer<QQuickTreeView> m_view;
-    bool m_hasChildren;
-    bool m_isExpanded;
+    bool m_hasChildren = false;
+    bool m_isExpanded = false;
 
     friend class QQuickTreeViewPrivate;
 };
