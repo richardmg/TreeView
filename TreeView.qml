@@ -7,9 +7,12 @@ T.TreeView {
 
     property real indent: 15
     property real columnPadding: 20
-    property color bgColorOdd: "transparent"
-    property color bgColorEven: "transparent"
-    property color bgColorCurrent: Qt.rgba(0.8, 0.8, 0.8)
+    property color backgroundColorOddRows: "transparent"
+    property color backgroundColorEvenRows: "transparent"
+    property color backgroundColorCurrentIndex: Qt.rgba(0.8, 0.8, 0.8)
+    property color foregroundColorOddRows: "black"
+    property color foregroundColorEvenRows: "black"
+    property color foregroundColorCurrentIndex: "black"
 
     delegate: DelegateChooser {
         DelegateChoice {
@@ -36,6 +39,7 @@ T.TreeView {
                 Text {
                     id: treeNodeLabel
                     x: Math.max(treeNodeIndicator.x + treeNodeIndicator.width + 5, (control.depth(row) + 1) * indent)
+                    color: fgColor(column, row)
                     text: display
                 }
 
@@ -61,6 +65,7 @@ T.TreeView {
                 Text {
                     id: infoLabel
                     x: columnPadding / 2
+                    color: fgColor(column, row)
                     text: display
                 }
             }
@@ -69,10 +74,19 @@ T.TreeView {
 
     function bgColor(column, row) {
         if (treeView.currentViewIndex.row === row && treeView.currentViewIndex.column === column)
-            return bgColorCurrent
+            return backgroundColorCurrentIndex
         else if (row % 2)
-            return bgColorOdd
+            return backgroundColorOddRows
         else
-            return bgColorEven
+            return backgroundColorEvenRows
+    }
+
+    function fgColor(column, row) {
+        if (treeView.currentViewIndex.row === row && treeView.currentViewIndex.column === column)
+            return foregroundColorCurrentIndex
+        else if (row % 2)
+            return foregroundColorOddRows
+        else
+            return foregroundColorEvenRows
     }
 }
