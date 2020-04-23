@@ -7,22 +7,9 @@ T.TreeView {
 
     property real indent: 15
     property real columnPadding: 20
-    property real labelOffset: 12
     property color bgColorOdd: "transparent"
     property color bgColorEven: "transparent"
     property color bgColorCurrent: Qt.rgba(0.8, 0.8, 0.8)
-
-    indicator: Text {
-        text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
-    }
-
-    property Component treeLabel: Text {
-        text: display2
-    }
-
-    property Component infoLabel: Text {
-        text: display2
-    }
 
     delegate: DelegateChooser {
         DelegateChoice {
@@ -30,38 +17,34 @@ T.TreeView {
             column: 0
 
             Rectangle {
-                implicitWidth: labelLoader.x + labelLoader.width + (columnPadding / 2)
-                implicitHeight: Math.max(indicatorLoader.height, labelLoader.height)
+                id: treeNode
+                implicitWidth: treeNodeLabel.x + treeNodeLabel.width + (columnPadding / 2)
+                implicitHeight: Math.max(treeNodeIndicator.height, treeNodeLabel.height)
                 color: bgColor(column, row)
+                //color: TreeView.bgColor
 
-                property int rowCpy: row
-                property bool isExpandedCpy: TreeView.isExpanded
-                property bool hasChildrenCpy: TreeView.hasChildren
+                property bool hasChildren: TreeView.hasChildren
+                property bool isExpanded: TreeView.isExpanded
 
-                Loader {
-                    id: indicatorLoader
+                Text {
+                    id: treeNodeIndicator
                     x: control.depth(row) * indent
-                    width: labelOffset
-                    property int row: rowCpy
-                    property bool hasChildren: hasChildrenCpy
-                    property bool isExpanded: isExpandedCpy
-                    sourceComponent: indicator
+                    width: 15
+                    text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
                 }
 
-                Loader {
-                    id: labelLoader
-                    x: Math.max(indicatorLoader.x + indicatorLoader.width + 5, (control.depth(row) + 1) * indent)
-                    property int row2: row
-                    property string display2: display
-                    sourceComponent: treeLabel
+                Text {
+                    id: treeNodeLabel
+                    x: Math.max(treeNodeIndicator.x + treeNodeIndicator.width + 5, (control.depth(row) + 1) * indent)
+                    text: display
                 }
 
                 MouseArea {
-                    x: indicatorLoader.x
-                    width: indicatorLoader.width
-                    height: indicatorLoader.height
+                    x: treeNodeIndicator.x
+                    width: treeNodeIndicator.width
+                    height: treeNodeIndicator.height
                     onClicked: {
-                        if (control.hasChildren(row))
+                        if (hasChildren)
                             control.toggleExpanded(row)
                         else
                             control.currentViewIndex.row = row
@@ -73,15 +56,12 @@ T.TreeView {
         DelegateChoice {
             //  All the other columns
             Rectangle {
-                implicitWidth: infoLoader.x + infoLoader.width + (columnPadding / 2)
+                implicitWidth: infoLabel.x + infoLabel.width + (columnPadding / 2)
                 color: bgColor(column, row)
-                Loader {
-                    id: infoLoader
+                Text {
+                    id: infoLabel
                     x: columnPadding / 2
-                    property int row2: row
-                    property int column2: column
-                    property string display2: display
-                    sourceComponent: infoLabel
+                    text: display
                 }
             }
         }
