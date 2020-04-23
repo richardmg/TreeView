@@ -10,8 +10,13 @@ class QQuickTreeViewPrivate;
 class QQuickTreeView : public QQuickTableView
 {
     Q_OBJECT
+
     Q_PROPERTY(QModelIndex currentViewIndex READ currentViewIndex WRITE setCurrentViewIndex NOTIFY currentViewIndexChanged);
     Q_PROPERTY(QQmlComponent *indicator READ indicator WRITE setIndicator NOTIFY indicatorChanged)
+
+    QML_NAMED_ELEMENT(TreeView)
+    QML_ADDED_IN_MINOR_VERSION(15)
+    QML_ATTACHED(QQuickTableViewAttached)
 
 public:
     QQuickTreeView(QQuickItem *parent = nullptr);

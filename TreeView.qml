@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import Qt.labs.qmlmodels 1.0
-import QtQuick.TreeView 2.15 as T
+import TreeView 2.15 as T
 
 T.TreeView {
     id: control

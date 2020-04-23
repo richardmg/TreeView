@@ -9,8 +9,6 @@
 int main(int argc, char **argv){
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<QQuickTreeView>("QtQuick.TreeView", 2, 15, "TreeView");
-
     QQmlApplicationEngine engine;
     QQmlFileSelector* selector = new QQmlFileSelector(&engine);
     selector->setExtraSelectors(app.arguments());
