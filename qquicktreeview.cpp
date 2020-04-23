@@ -112,8 +112,7 @@ QQuickTreeView::~QQuickTreeView()
 
 bool QQuickTreeView::isExpanded(int row) const
 {
-    Q_D(const QQuickTreeView);
-    if (row < 0 || row >= d->m_proxyModel.rowCount())
+    if (row < 0 || row >= rows())
         return false;
 
     return d_func()->m_proxyModel.isExpanded(row);
@@ -121,8 +120,7 @@ bool QQuickTreeView::isExpanded(int row) const
 
 bool QQuickTreeView::hasChildren(int row) const
 {
-    Q_D(const QQuickTreeView);
-    if (row < 0 || row >= d->m_proxyModel.rowCount())
+    if (row < 0 || row >= rows())
         return false;
 
     return d_func()->m_proxyModel.hasChildren(row);
@@ -130,8 +128,7 @@ bool QQuickTreeView::hasChildren(int row) const
 
 bool QQuickTreeView::hasSiblings(int row) const
 {
-    Q_D(const QQuickTreeView);
-    if (row < 0 || row >= d->m_proxyModel.rowCount())
+    if (row < 0 || row >= rows())
         return false;
 
     return d_func()->m_proxyModel.hasSiblings(row);
@@ -139,8 +136,7 @@ bool QQuickTreeView::hasSiblings(int row) const
 
 int QQuickTreeView::depth(int row) const
 {
-    Q_D(const QQuickTreeView);
-    if (row < 0 || row >= d->m_proxyModel.rowCount())
+    if (row < 0 || row >= rows())
         return -1;
 
     return d_func()->m_proxyModel.depthAtRow(row);
@@ -162,7 +158,7 @@ void QQuickTreeView::expand(int row)
 void QQuickTreeView::collapse(int row)
 {
     Q_D(QQuickTreeView);
-    if (row < 0 || row >= d->m_proxyModel.rowCount())
+    if (row < 0 || row >= rows())
         return;
 
     if (!d->m_proxyModel.isExpanded(row))
