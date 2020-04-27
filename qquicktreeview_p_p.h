@@ -3,6 +3,7 @@
 
 #include <QtQuick/private/qquicktableview_p_p.h>
 #include "qquicktreemodeladaptor_p.h"
+#include "qquicktreeview_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -43,6 +44,7 @@ public:
     QVariant m_assignedModel;
     QPersistentModelIndex m_currentViewIndex;
     QModelIndex m_currentViewIndexEmitted;
+    QQuickTreeView::NavigateMode m_navigationMode = QQuickTreeView::Table;
 };
 
 #endif // QQUICKTREEVIEW_P_H

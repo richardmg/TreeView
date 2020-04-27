@@ -1,7 +1,6 @@
 #include <QtCore/qobject.h>
 #include <QtQml/qqmlcontext.h>
 
-#include "qquicktreeview_p.h"
 #include "qquicktreemodeladaptor_p.h"
 
 #include "qquicktreeview_p_p.h"
@@ -359,10 +358,16 @@ void QQuickTreeView::keyPressEvent(QKeyEvent *e)
         d->moveCurrentViewIndex(0, 1);
         break;
     case Qt::Key_Left:
-        d->moveCurrentViewIndex(-1, 0);
+        if (d->m_navigationMode == QQuickTreeView::Table)
+            d->moveCurrentViewIndex(-1, 0);
+        else
+            collapse(d->m_currentViewIndex.row());
         break;
     case Qt::Key_Right:
-        d->moveCurrentViewIndex(1, 0);
+        if (d->m_navigationMode == QQuickTreeView::Table)
+            d->moveCurrentViewIndex(1, 0);
+        else
+            expand(d->m_currentViewIndex.row());
         break;
     case Qt::Key_Space:
         toggleExpanded(d->m_currentViewIndex.row());
@@ -379,7 +384,10 @@ void QQuickTreeView::mouseReleaseEvent(QMouseEvent *e)
     if (column == -1 || row == -1)
         return;
 
-    setCurrentViewIndex(viewIndex(column, row));
+    if (d_func()->m_navigationMode == Table)
+        setCurrentViewIndex(viewIndex(column, row));
+    else
+        setCurrentViewIndex(viewIndex(0, row));
 }
 
 void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)
@@ -394,6 +402,21 @@ void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)
 QQuickTreeViewAttached *QQuickTreeView::qmlAttachedProperties(QObject *obj)
 {
     return new QQuickTreeViewAttached(obj);
+}
+
+QQuickTreeView::NavigateMode QQuickTreeView::navigationMode() const
+{
+    return d_func()->m_navigationMode;
+}
+
+void QQuickTreeView::setNavigationMode(QQuickTreeView::NavigateMode navigateMode)
+{
+    Q_D(QQuickTreeView);
+    if (d->m_navigationMode == navigateMode)
+        return;
+
+    d->m_navigationMode = navigateMode;
+    emit navigationModeChanged();
 }
 
 bool QQuickTreeViewAttached::hasChildren() const

@@ -75,7 +75,9 @@ T.TreeView {
     }
 
     function bgColor(column, row) {
-        if (treeView.currentViewIndex === viewIndex(column, row))
+        if (navigationMode === TreeView.List && currentViewIndex.row === row)
+            return backgroundColorCurrentIndex
+        else if (navigationMode === TreeView.Table && currentViewIndex === viewIndex(column, row))
             return backgroundColorCurrentIndex
         else if (row % 2)
             return backgroundColorOddRows
@@ -84,7 +86,9 @@ T.TreeView {
     }
 
     function fgColor(column, row) {
-        if (treeView.currentViewIndex === viewIndex(column, row))
+        if (navigationMode === TreeView.List && currentViewIndex.row === row)
+            return foregroundColorCurrentIndex
+        else if (navigationMode === TreeView.Table && currentViewIndex === viewIndex(column, row))
             return foregroundColorCurrentIndex
         else if (row % 2)
             return foregroundColorOddRows
