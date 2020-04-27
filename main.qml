@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Window 2.1
+import Qt.labs.qmlmodels 1.0
 
 Window {
     id: root
@@ -8,38 +9,27 @@ Window {
     visible: true
     visibility: Window.AutomaticVisibility
 
-    Rectangle {
+    TreeView {
+        id: treeView
         anchors.fill: parent
-        anchors.margins: 10
-        color: "black"//Qt.rgba(0.9, 0.9, 0.9, 1)
+        anchors.margins: 1
+        model: fileSystemModel
+        clip: true
+        focus: true
+        backgroundColorEvenRows: "white"
+        backgroundColorOddRows: backgroundColorEvenRows
 
-        TreeView {
-            id: treeView
-            anchors.fill: parent
-            anchors.margins: 2
-            model: fileSystemModel
-            clip: true
-            focus: true
-            rowSpacing: 1
-            columnSpacing: 1
-            bgColorEven: "white"
-            bgColorOdd: bgColorEven
+        Keys.onReturnPressed: {
+            var modelIndex = mapToModel(currentViewIndex);
+            var label = model.data(modelIndex, treeView.textRole)
+            print("selected:", label)
+        }
 
-            Keys.onReturnPressed: {
-                var modelIndex = mapToModel(currentViewIndex);
-                var label = model.data(modelIndex, treeView.textRole)
-                print("selected:", label)
-            }
-
-            Keys.onTabPressed: {
-                var rootIndex = fileSystemModel.index(0, 0)
-                var parentIndex = fileSystemModel.index(1, 0, rootIndex)
-                var childIndex = fileSystemModel.index(10, 0, parentIndex)
-
-                var childIndexView = mapFromModel(childIndex)
-                print(childIndexView.row)
-                currentViewIndex = childIndexView
-            }
+        Keys.onTabPressed: {
+            // Set the second file inside the root folder as current:
+            var rootIndex = fileSystemModel.index(0, 0)
+            var childIndex = fileSystemModel.index(1, 0, rootIndex)
+            currentViewIndex = mapFromModel(childIndex)
         }
     }
 }

@@ -7,12 +7,14 @@ T.TreeView {
 
     property real indent: 15
     property real columnPadding: 20
+
     property color backgroundColorOddRows: "transparent"
     property color backgroundColorEvenRows: "transparent"
     property color backgroundColorCurrentIndex: Qt.rgba(0.8, 0.8, 0.8)
     property color foregroundColorOddRows: "black"
     property color foregroundColorEvenRows: "black"
-    property color foregroundColorCurrentIndex: "black"
+    property color foregroundColorCurrentIndex: "red"
+    property color accentColor: "black"
 
     delegate: DelegateChooser {
         DelegateChoice {
@@ -24,7 +26,6 @@ T.TreeView {
                 implicitWidth: treeNodeLabel.x + treeNodeLabel.width + (columnPadding / 2)
                 implicitHeight: Math.max(treeNodeIndicator.height, treeNodeLabel.height)
                 color: bgColor(column, row)
-                //color: TreeView.bgColor
 
                 property bool hasChildren: TreeView.hasChildren
                 property bool isExpanded: TreeView.isExpanded
@@ -33,6 +34,7 @@ T.TreeView {
                     id: treeNodeIndicator
                     x: control.depth(row) * indent
                     width: 15
+                    color: accentColor
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
                 }
 
@@ -73,7 +75,7 @@ T.TreeView {
     }
 
     function bgColor(column, row) {
-        if (treeView.currentViewIndex.row === row && treeView.currentViewIndex.column === column)
+        if (treeView.currentViewIndex === viewIndex(column, row))
             return backgroundColorCurrentIndex
         else if (row % 2)
             return backgroundColorOddRows
@@ -82,7 +84,7 @@ T.TreeView {
     }
 
     function fgColor(column, row) {
-        if (treeView.currentViewIndex.row === row && treeView.currentViewIndex.column === column)
+        if (treeView.currentViewIndex === viewIndex(column, row))
             return foregroundColorCurrentIndex
         else if (row % 2)
             return foregroundColorOddRows
