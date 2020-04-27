@@ -13,7 +13,6 @@ class QQuickTreeView : public QQuickTableView
     Q_OBJECT
 
     Q_PROPERTY(QModelIndex currentViewIndex READ currentViewIndex WRITE setCurrentViewIndex NOTIFY currentViewIndexChanged);
-    Q_PROPERTY(QQmlComponent *indicator READ indicator WRITE setIndicator NOTIFY indicatorChanged)
 
     QML_NAMED_ELEMENT(TreeView)
     QML_ADDED_IN_MINOR_VERSION(15)
@@ -45,9 +44,6 @@ public:
     void keyPressEvent(QKeyEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
-
-    QQmlComponent * indicator() const;
-    void setIndicator(QQmlComponent * indicator);
 
     static QQuickTreeViewAttached *qmlAttachedProperties(QObject *obj);
 

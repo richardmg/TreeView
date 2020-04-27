@@ -391,21 +391,6 @@ void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)
     toggleExpanded(row);
 }
 
-QQmlComponent *QQuickTreeView::indicator() const
-{
-    return d_func()->m_indicator;
-}
-
-void QQuickTreeView::setIndicator(QQmlComponent *indicator)
-{
-    Q_D(QQuickTreeView);
-    if (d->m_indicator == indicator)
-        return;
-
-    d->m_indicator = indicator;
-    emit indicatorChanged();
-}
-
 QQuickTreeViewAttached *QQuickTreeView::qmlAttachedProperties(QObject *obj)
 {
     return new QQuickTreeViewAttached(obj);

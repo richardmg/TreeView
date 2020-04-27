@@ -43,7 +43,6 @@ public:
     QVariant m_assignedModel;
     QPersistentModelIndex m_currentViewIndex;
     QModelIndex m_currentViewIndexEmitted;
-    QQmlComponent *m_indicator = nullptr;
 };
 
 #endif // QQUICKTREEVIEW_P_H
