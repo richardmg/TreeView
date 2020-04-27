@@ -146,6 +146,14 @@ qreal QQuickTreeViewPrivate::effectiveColumnWidth(int column) const
     return loadedTableItem(QPoint(column, topRow()))->geometry().width();
 }
 
+void QQuickTreeViewPrivate::moveCurrentViewIndex(int directionX, int directionY)
+{
+    Q_Q(QQuickTreeView);
+    const int row = qBound(0, m_currentViewIndex.row() + directionY, q->rows() - 1);
+    const int column = qBound(0, m_currentViewIndex.column() + directionX, q->columns() - 1);
+    q->setCurrentViewIndex(q->viewIndex(column, row));
+}
+
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
     : QQuickTableView(*(new QQuickTreeViewPrivate), parent)
 {
@@ -338,12 +346,18 @@ void QQuickTreeView::setCurrentViewIndex(const QModelIndex &viewIndex)
     emit currentViewIndexChanged();
 }
 
-void QQuickTreeViewPrivate::moveCurrentViewIndex(int directionX, int directionY)
+QQuickItem *QQuickTreeView::itemAtCell(const QPoint &cell) const
 {
-    Q_Q(QQuickTreeView);
-    const int row = qBound(0, m_currentViewIndex.row() + directionY, q->rows() - 1);
-    const int column = qBound(0, m_currentViewIndex.column() + directionX, q->columns() - 1);
-    q->setCurrentViewIndex(q->viewIndex(column, row));
+    Q_D(const QQuickTreeView);
+    const int modelIndex = d->modelIndexAtCell(cell);
+    if (!d->loadedItems.contains(modelIndex))
+        return nullptr;
+    return d->loadedItems.value(modelIndex)->item;
+}
+
+QQuickItem *QQuickTreeView::itemAtIndex(const QModelIndex &index) const
+{
+    return itemAtCell(QPoint(index.column(), index.row()));
 }
 
 void QQuickTreeView::keyPressEvent(QKeyEvent *e)

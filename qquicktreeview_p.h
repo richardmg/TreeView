@@ -38,6 +38,9 @@ public:
     Q_INVOKABLE int columnAtPos(int x, bool includeSpacing);
     Q_INVOKABLE int rowAtPos(int y, bool includeSpacing);
 
+    Q_INVOKABLE QQuickItem *itemAtCell(const QPoint &cell) const;
+    Q_INVOKABLE QQuickItem *itemAtIndex(const QModelIndex &index) const;
+
     Q_INVOKABLE QModelIndex viewIndex(int column, int row);
     Q_INVOKABLE QModelIndex mapToModel(const QModelIndex &viewIndex);
     Q_INVOKABLE QModelIndex mapFromModel(const QModelIndex &modelIndex);
