@@ -66,7 +66,7 @@ T.TreeView {
                         if (hasChildren)
                             control.toggleExpanded(row)
                         else
-                            control.currentViewIndex.row = row
+                            control.currentIndex.row = row
                     }
                 }
             }
@@ -114,9 +114,9 @@ T.TreeView {
     }
 
     function bgColor(column, row) {
-        if (navigationMode === TreeView.List && currentViewIndex.row === row)
+        if (navigationMode === TreeView.List && currentIndex.row === row)
             return backgroundColorCurrent
-        else if (navigationMode === TreeView.Table && currentViewIndex === viewIndex(column, row))
+        else if (navigationMode === TreeView.Table && currentIndex === viewIndex(column, row))
             return backgroundColorCurrent
         else if (row % 2)
             return backgroundColorOddRows
@@ -125,9 +125,9 @@ T.TreeView {
     }
 
     function fgColor(column, row) {
-        if (navigationMode === TreeView.List && currentViewIndex.row === row)
+        if (navigationMode === TreeView.List && currentIndex.row === row)
             return foregroundColorCurrent
-        else if (navigationMode === TreeView.Table && currentViewIndex === viewIndex(column, row))
+        else if (navigationMode === TreeView.Table && currentIndex === viewIndex(column, row))
             return foregroundColorCurrent
         else if (row % 2)
             return foregroundColorOddRows

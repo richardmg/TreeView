@@ -41,8 +41,8 @@ public:
     // data in the model, which we show in the remaining columns of the table.
     QQuickTreeModelAdaptor m_proxyModel;
     QVariant m_assignedModel;
-    QPersistentModelIndex m_currentViewIndex;
-    QModelIndex m_currentViewIndexEmitted;
+    QPersistentModelIndex m_currentModelIndex;
+    QModelIndex m_currentModelIndexEmitted;
     QQuickItem *m_currentItemEmitted = nullptr;
     QQuickTreeView::NavigateMode m_navigationMode = QQuickTreeView::Table;
 };

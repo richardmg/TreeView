@@ -12,7 +12,8 @@ class QQuickTreeView : public QQuickTableView
 {
     Q_OBJECT
 
-    Q_PROPERTY(QModelIndex currentViewIndex READ currentViewIndex WRITE setCurrentViewIndex NOTIFY currentViewIndexChanged);
+    Q_PROPERTY(QModelIndex currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged);
+    Q_PROPERTY(QModelIndex currentModelIndex READ currentModelIndex WRITE setCurrentModelIndex NOTIFY currentModelIndexChanged);
     Q_PROPERTY(QQuickItem *currentItem READ currentItem NOTIFY currentItemChanged);
     Q_PROPERTY(NavigateMode navigationMode READ navigationMode WRITE setNavigationMode NOTIFY navigationModeChanged);
 
@@ -36,19 +37,27 @@ public:
     Q_INVOKABLE void collapse(int row);
     Q_INVOKABLE void toggleExpanded(int row);
 
+    Q_INVOKABLE void collapseModelIndex(const QModelIndex &modelIndex);
+    Q_INVOKABLE void expandModelIndex(const QModelIndex &modelIndex);
+    Q_INVOKABLE void toggleModelIndexExpanded(const QModelIndex &modelIndex);
+
     Q_INVOKABLE int columnAtPos(int x, bool includeSpacing);
     Q_INVOKABLE int rowAtPos(int y, bool includeSpacing);
 
     Q_INVOKABLE QQuickItem *itemAtCell(const QPoint &cell) const;
-    Q_INVOKABLE QQuickItem *itemAtIndex(const QModelIndex &index) const;
+    Q_INVOKABLE QQuickItem *itemAtIndex(const QModelIndex &viewIndex) const;
+    Q_INVOKABLE QQuickItem *itemAtModelIndex(const QModelIndex &modelIndex) const;
 
     Q_INVOKABLE QModelIndex viewIndex(int column, int row);
-    Q_INVOKABLE QModelIndex mapToModel(const QModelIndex &viewIndex);
-    Q_INVOKABLE QModelIndex mapFromModel(const QModelIndex &modelIndex);
+    Q_INVOKABLE QModelIndex mapToModel(const QModelIndex &viewIndex) const;
+    Q_INVOKABLE QModelIndex mapFromModel(const QModelIndex &modelIndex) const;
 
-    QModelIndex currentViewIndex() const;
-    void setCurrentViewIndex(const QModelIndex &viewIndex);
+    QModelIndex currentIndex() const;
+    void setCurrentIndex(const QModelIndex &index);
     QQuickItem *currentItem() const;
+
+    QModelIndex currentModelIndex() const;
+    void setCurrentModelIndex(const QModelIndex &modelIndex);
 
     NavigateMode navigationMode() const;
     void setNavigationMode(NavigateMode navigateMode);
@@ -60,7 +69,8 @@ public:
     static QQuickTreeViewAttached *qmlAttachedProperties(QObject *obj);
 
 signals:
-    void currentViewIndexChanged();
+    void currentIndexChanged();
+    void currentModelIndexChanged();
     void expanded(int row);
     void collapsed(int row);
     void navigationModeChanged();

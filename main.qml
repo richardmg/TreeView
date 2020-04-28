@@ -21,9 +21,8 @@ Window {
         navigationMode: TreeView.List
 
         Keys.onReturnPressed: {
-            var modelIndex = mapToModel(currentViewIndex);
-            var label = model.data(modelIndex, treeView.textRole)
-            print("selected:", label)
+            var label = model.data(currentModelIndex, treeView.textRole)
+            print("selected row", currentIndex.row + ", label:", label)
         }
 
         Keys.onTabPressed: {

@@ -118,11 +118,12 @@ void QQuickTreeViewPrivate::updatePolish()
     if (loadRequest.isActive())
         return;
 
-    if (m_currentViewIndexEmitted != m_currentViewIndex) {
+    if (m_currentModelIndexEmitted != m_currentModelIndex) {
         // m_currentIndex is a QPersistentModelIndex which will update automatically, so
         // we need this extra detour to check if is has changed after a model change.
-        m_currentViewIndexEmitted = m_currentViewIndex;
-        emit q->currentViewIndexChanged();
+        m_currentModelIndexEmitted = m_currentModelIndex;
+        emit q->currentIndexChanged();
+        emit q->currentModelIndexChanged();
     }
 
     QQuickItem *currentItem = q->currentItem();
@@ -159,9 +160,11 @@ qreal QQuickTreeViewPrivate::effectiveColumnWidth(int column) const
 void QQuickTreeViewPrivate::moveCurrentViewIndex(int directionX, int directionY)
 {
     Q_Q(QQuickTreeView);
-    const int row = qBound(0, m_currentViewIndex.row() + directionY, q->rows() - 1);
-    const int column = qBound(0, m_currentViewIndex.column() + directionX, q->columns() - 1);
-    q->setCurrentViewIndex(q->viewIndex(column, row));
+    const QModelIndex oldViewIndex = q->mapFromModel(m_currentModelIndex);
+    const int row = qBound(0, oldViewIndex.row() + directionY, q->rows() - 1);
+    const int column = qBound(0, oldViewIndex.column() + directionX, q->columns() - 1);
+    const QModelIndex newViewIndex = q->viewIndex(column, row);
+    q->setCurrentModelIndex(q->mapToModel(newViewIndex));
 }
 
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
@@ -227,6 +230,21 @@ void QQuickTreeView::expand(int row)
     }
 
     emit expanded(row);
+}
+
+void QQuickTreeView::expandModelIndex(const QModelIndex &modelIndex)
+{
+    expand(mapFromModel(modelIndex).row());
+}
+
+void QQuickTreeView::collapseModelIndex(const QModelIndex &modelIndex)
+{
+    collapse(mapFromModel(modelIndex).row());
+}
+
+void QQuickTreeView::toggleModelIndexExpanded(const QModelIndex &modelIndex)
+{
+    toggleExpanded(mapFromModel(modelIndex).row());
 }
 
 void QQuickTreeView::collapse(int row)
@@ -324,37 +342,49 @@ QModelIndex QQuickTreeView::viewIndex(int column, int row)
     return d_func()->m_proxyModel.index(row, column);
 }
 
-QModelIndex QQuickTreeView::mapToModel(const QModelIndex &viewIndex)
+QModelIndex QQuickTreeView::mapToModel(const QModelIndex &viewIndex) const
 {
     return d_func()->m_proxyModel.mapToModel(viewIndex);
 }
 
-QModelIndex QQuickTreeView::mapFromModel(const QModelIndex &modelIndex)
+QModelIndex QQuickTreeView::mapFromModel(const QModelIndex &modelIndex) const
 {
     return d_func()->m_proxyModel.mapFromModel(modelIndex);
 }
 
-QModelIndex QQuickTreeView::currentViewIndex() const
+QModelIndex QQuickTreeView::currentIndex() const
 {
-    return d_func()->m_currentViewIndex;
+    return mapFromModel(currentModelIndex());
 }
 
-void QQuickTreeView::setCurrentViewIndex(const QModelIndex &viewIndex)
+void QQuickTreeView::setCurrentIndex(const QModelIndex &index)
+{
+    setCurrentModelIndex(mapToModel(index));
+}
+
+QModelIndex QQuickTreeView::currentModelIndex() const
+{
+    return d_func()->m_currentModelIndex;
+}
+
+void QQuickTreeView::setCurrentModelIndex(const QModelIndex &modelIndex)
 {
     Q_D(QQuickTreeView);
-    if (d->m_currentViewIndex == viewIndex)
+    if (d->m_currentModelIndex == modelIndex)
         return;
 
-    d->m_currentViewIndex = viewIndex;
-    d->m_currentViewIndexEmitted = viewIndex;
+    d->m_currentModelIndex = modelIndex;
+    d->m_currentModelIndexEmitted = modelIndex;
     d->m_currentItemEmitted = currentItem();
-    emit currentViewIndexChanged();
+
+    emit currentIndexChanged();
+    emit currentModelIndexChanged();
     emit currentItemChanged();
 }
 
 QQuickItem *QQuickTreeView::currentItem() const
 {
-    return itemAtIndex(currentViewIndex());
+    return itemAtModelIndex(currentModelIndex());
 }
 
 QQuickItem *QQuickTreeView::itemAtCell(const QPoint &cell) const
@@ -366,9 +396,14 @@ QQuickItem *QQuickTreeView::itemAtCell(const QPoint &cell) const
     return d->loadedItems.value(modelIndex)->item;
 }
 
-QQuickItem *QQuickTreeView::itemAtIndex(const QModelIndex &index) const
+QQuickItem *QQuickTreeView::itemAtIndex(const QModelIndex &viewIndex) const
 {
-    return itemAtCell(QPoint(index.column(), index.row()));
+    return itemAtCell(QPoint(viewIndex.column(), viewIndex.row()));
+}
+
+QQuickItem *QQuickTreeView::itemAtModelIndex(const QModelIndex &modelIndex) const
+{
+    return itemAtIndex(mapFromModel(modelIndex));
 }
 
 void QQuickTreeView::keyPressEvent(QKeyEvent *e)
@@ -386,16 +421,16 @@ void QQuickTreeView::keyPressEvent(QKeyEvent *e)
         if (d->m_navigationMode == QQuickTreeView::Table)
             d->moveCurrentViewIndex(-1, 0);
         else
-            collapse(d->m_currentViewIndex.row());
+            collapseModelIndex(d->m_currentModelIndex);
         break;
     case Qt::Key_Right:
         if (d->m_navigationMode == QQuickTreeView::Table)
             d->moveCurrentViewIndex(1, 0);
         else
-            expand(d->m_currentViewIndex.row());
+            expandModelIndex(d->m_currentModelIndex);
         break;
     case Qt::Key_Space:
-        toggleExpanded(d->m_currentViewIndex.row());
+        toggleModelIndexExpanded(d->m_currentModelIndex);
         break;
     default:
         break;
@@ -410,9 +445,9 @@ void QQuickTreeView::mouseReleaseEvent(QMouseEvent *e)
         return;
 
     if (d_func()->m_navigationMode == Table)
-        setCurrentViewIndex(viewIndex(column, row));
+        setCurrentModelIndex(mapToModel(viewIndex(column, row)));
     else
-        setCurrentViewIndex(viewIndex(0, row));
+        setCurrentModelIndex(mapToModel(viewIndex(0, row)));
 }
 
 void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)
