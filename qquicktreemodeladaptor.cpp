@@ -226,8 +226,10 @@ QModelIndex QQuickTreeModelAdaptor::mapToModel(const QModelIndex &index) const
 QModelIndex QQuickTreeModelAdaptor::mapFromModel(const QModelIndex &index) const
 {
     int row = -1;
+
     for (int i = 0; i < m_items.count(); ++i) {
-        if (m_items[i].index == index) {
+        const QModelIndex proxyIndex = m_items[i].index;
+        if (proxyIndex.row() == index.row() && proxyIndex.parent() == index.parent()) {
             row = i;
             break;
         }
