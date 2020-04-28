@@ -170,6 +170,32 @@ void QQuickTreeViewPrivate::moveCurrentViewIndex(int directionX, int directionY)
     const int column = qBound(0, oldViewIndex.column() + directionX, q->columns() - 1);
     const QModelIndex newViewIndex = q->viewIndex(column, row);
     q->setCurrentModelIndex(q->mapToModel(newViewIndex));
+
+    // Move the current item into the viewport so that it loads
+    if (column < leftColumn())
+        q->setContentX(q->contentX() - cellSpacing.width() - 1);
+    else if (column > rightColumn())
+        q->setContentX(q->contentX() + cellSpacing.width() + 1);
+
+    if (row < topRow())
+        q->setContentY(q->contentY() - cellSpacing.height() - 1);
+    else if (row > bottomRow())
+        q->setContentY(q->contentY() + cellSpacing.height() + 1);
+
+    if (QQuickItem *item = q->currentItem()) {
+        // Ensure that the whole item is visible
+        const QRectF itemRect = QRectF(q->mapFromItem(q->contentItem(), item->position()), item->size());
+
+        if (itemRect.x() <= 0)
+            q->setContentX(item->x());
+        else if (itemRect.right() > q->size().width())
+            q->setContentX(item->x() + item->width() - q->width());
+
+        if (itemRect.y() <= 0)
+            q->setContentY(item->y());
+        else if (itemRect.bottom() > q->size().height())
+            q->setContentY(item->y() + item->height() - q->height());
+    }
 }
 
 QQuickTreeView::QQuickTreeView(QQuickItem *parent)
