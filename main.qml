@@ -18,7 +18,7 @@ Window {
         focus: true
         backgroundColorEvenRows: "white"
         backgroundColorOddRows: backgroundColorEvenRows
-        navigationMode: TreeView.Table
+        navigationMode: TreeView.List
 
         Keys.onReturnPressed: {
             var modelIndex = mapToModel(currentViewIndex);

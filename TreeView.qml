@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import Qt.labs.qmlmodels 1.0
 import QtQuick.Shapes 1.0
+import QtQuick.Controls 2.12
+import QtQuick.Controls.impl 2.12
+import QtQuick.Templates 2.12 as T
 import TreeView 2.15 as T
 
 T.TreeView {
@@ -36,6 +39,8 @@ T.TreeView {
 
                 property bool hasChildren: TreeView.hasChildren
                 property bool isExpanded: TreeView.isExpanded
+                property var iconCpy: icon
+                property string displayCpy: display
 
                 Text {
                     id: treeNodeIndicator
@@ -45,11 +50,12 @@ T.TreeView {
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
                 }
 
-                Text {
+                IconLabel {
                     id: treeNodeLabel
                     x: Math.max(treeNodeIndicator.x + treeNodeIndicator.width + 5, (control.depth(row) + 1) * indent)
                     color: fgColor(column, row)
-                    text: display
+                    text: displayCpy
+                    icon: iconCpy
                 }
 
                 MouseArea {
