@@ -14,8 +14,8 @@ T.TreeView {
 
     // NB: The following properties are not a part of the TreeView API, and
     // only provided as a quick way to tweak _this_ style/delegate. Rather than
-    // customising it the outside, consider just making a copy of the file to
-    // create your own custom style.
+    // customising it from the application, consider just making a copy of
+    // it as a starting point for your own custom version.
 
     property color foregroundColorOddRows: "black"
     property color backgroundColorOddRows: "transparent"
