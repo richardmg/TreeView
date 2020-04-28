@@ -39,12 +39,13 @@ T.TreeView {
 
                 property bool hasChildren: TreeView.hasChildren
                 property bool isExpanded: TreeView.isExpanded
-                property var iconCpy: icon
-                property string displayCpy: display
+                property int depth: TreeView.depth
+//                property var iconCpy: icon
+//                property string displayCpy: display
 
                 Text {
                     id: treeNodeIndicator
-                    x: control.depth(row) * indent
+                    x: depth * indent
                     width: 15
                     color: expandedIndicatorColor
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
@@ -52,10 +53,11 @@ T.TreeView {
 
                 IconLabel {
                     id: treeNodeLabel
-                    x: Math.max(treeNodeIndicator.x + treeNodeIndicator.width + 5, (control.depth(row) + 1) * indent)
+                    x: Math.max(treeNodeIndicator.x + treeNodeIndicator.width + 5, (depth + 1) * indent)
+                    clip: true
                     color: fgColor(column, row)
-                    text: displayCpy
-                    icon: iconCpy
+                    text: model.display
+                    //icon: Image { model.fileIcon }
                 }
 
                 MouseArea {
@@ -82,6 +84,7 @@ T.TreeView {
                     x: columnPadding / 2
                     color: fgColor(column, row)
                     text: display
+                    clip: true
                 }
 
             }

@@ -94,6 +94,7 @@ void QQuickTreeViewPrivate::initItemCallback(int modelIndex, QObject *object)
         const int row = context->contextProperty("row").toInt();
         attached->setIsExpanded(q->isExpanded(row));
         attached->setHasChildren(q->hasChildren(row));
+        attached->setDepth(m_proxyModel.depthAtRow(row));
     }
 }
 
@@ -107,6 +108,7 @@ void QQuickTreeViewPrivate::itemReusedCallback(int modelIndex, QObject *object)
         const int row = context->contextProperty("row").toInt();
         attached->setIsExpanded(q->isExpanded(row));
         attached->setHasChildren(q->hasChildren(row));
+        attached->setDepth(m_proxyModel.depthAtRow(row));
     }
 }
 
@@ -558,6 +560,20 @@ void QQuickTreeViewAttached::setIsExpanded(bool isExpanded)
 
     m_isExpanded = isExpanded;
     emit isExpandedChanged();
+}
+
+int QQuickTreeViewAttached::depth()
+{
+    return m_depth;
+}
+
+void QQuickTreeViewAttached::setDepth(int depth)
+{
+    if (m_depth == depth)
+        return;
+
+    m_depth = depth;
+    emit depthChanged();
 }
 
 #include "moc_qquicktreeview_p.cpp"

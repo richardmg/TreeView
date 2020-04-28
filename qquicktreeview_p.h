@@ -90,6 +90,7 @@ class QQuickTreeViewAttached : public QQuickTableViewAttached
     Q_PROPERTY(QQuickTreeView *view READ view NOTIFY viewChanged)
     Q_PROPERTY(bool hasChildren READ hasChildren NOTIFY hasChildrenChanged)
     Q_PROPERTY(bool isExpanded READ isExpanded NOTIFY isExpandedChanged)
+    Q_PROPERTY(int depth READ depth NOTIFY depthChanged)
 
 public:
     QQuickTreeViewAttached(QObject *parent) : QQuickTableViewAttached(parent) {}
@@ -101,15 +102,20 @@ public:
     bool isExpanded() const;
     void setIsExpanded(bool isExpanded);
 
+    int depth();
+    void setDepth(int depth);
+
 Q_SIGNALS:
     void viewChanged();
     void hasChildrenChanged();
     void isExpandedChanged();
+    void depthChanged();
 
 private:
     QPointer<QQuickTreeView> m_view;
     bool m_hasChildren = false;
     bool m_isExpanded = false;
+    int m_depth = -1;
 
     friend class QQuickTreeViewPrivate;
 };
