@@ -93,6 +93,7 @@ public:
     QHash<int, QByteArray> roleNames() const;
     QVariant data(const QModelIndex &, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     void clearModelData();
 

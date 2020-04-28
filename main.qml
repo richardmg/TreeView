@@ -10,16 +10,25 @@ Window {
     visible: true
     visibility: Window.AutomaticVisibility
 
+    HorizontalHeaderView {
+        id: header
+        syncView: treeView
+        //Component.onCompleted: print(model.headerData(0, Qt.Horizontal))
+    }
+
     TreeView {
         id: treeView
-        anchors.fill: parent
+        anchors.top: header.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.margins: 1
         model: fileSystemModel
         clip: true
         focus: true
         backgroundColorEvenRows: "white"
         backgroundColorOddRows: backgroundColorEvenRows
-        navigationMode: TreeView.List
+        navigationMode: TreeView.Table
 
         Keys.onReturnPressed: {
             var label = model.data(currentModelIndex, treeView.textRole)

@@ -122,6 +122,7 @@ QHash<int, QByteArray> QQuickTreeModelAdaptor::roleNames() const
 {
     if (!m_model)
         return QHash<int, QByteArray>();
+    //qDebug() << m_model->roleNames();
     return m_model->roleNames();
 }
 
@@ -153,6 +154,12 @@ bool QQuickTreeModelAdaptor::setData(const QModelIndex &index, const QVariant &v
         return false;
 
     return m_model->setData(mapToModel(index), value, role);
+}
+
+QVariant QQuickTreeModelAdaptor::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    qDebug() << Q_FUNC_INFO << m_model->headerData(section, orientation, role);
+    return m_model->headerData(section, orientation, role);
 }
 
 int QQuickTreeModelAdaptor::depthAtRow(int row) const

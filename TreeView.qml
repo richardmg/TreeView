@@ -1,8 +1,6 @@
 import QtQuick 2.0
 import Qt.labs.qmlmodels 1.0
 import QtQuick.Shapes 1.0
-import QtQuick.Controls 2.12
-import QtQuick.Controls.impl 2.12
 import QtQuick.Templates 2.12 as T
 import TreeView 2.15 as T
 
@@ -28,7 +26,7 @@ T.TreeView {
 
     delegate: DelegateChooser {
         DelegateChoice {
-            // The column where the tree is at
+            // The column where the tree is drawn
             column: 0
 
             Rectangle {
@@ -40,8 +38,6 @@ T.TreeView {
                 property bool hasChildren: TreeView.hasChildren
                 property bool isExpanded: TreeView.isExpanded
                 property int depth: TreeView.depth
-//                property var iconCpy: icon
-//                property string displayCpy: display
 
                 Text {
                     id: treeNodeIndicator
@@ -51,13 +47,12 @@ T.TreeView {
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
                 }
 
-                IconLabel {
+                Text {
                     id: treeNodeLabel
-                    x: Math.max(treeNodeIndicator.x + treeNodeIndicator.width + 5, (depth + 1) * indent)
+                    x: treeNodeIndicator.x + indent
                     clip: true
                     color: fgColor(column, row)
                     text: model.display
-                    //icon: Image { model.fileIcon }
                 }
 
                 MouseArea {
@@ -75,7 +70,7 @@ T.TreeView {
         }
 
         DelegateChoice {
-            //  All the other columns
+            //  The remaining columns after the tree column will use this delegate
             Rectangle {
                 implicitWidth: infoLabel.x + infoLabel.width + (columnPadding / 2)
                 color: bgColor(column, row)
