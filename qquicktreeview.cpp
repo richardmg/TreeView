@@ -112,11 +112,16 @@ void QQuickTreeViewPrivate::itemReusedCallback(int modelIndex, QObject *object)
 
 void QQuickTreeViewPrivate::updatePolish()
 {
-    Q_Q(QQuickTreeView);
-
     QQuickTableViewPrivate::updatePolish();
     if (loadRequest.isActive())
         return;
+
+    checkForPropertyChanges();
+}
+
+void QQuickTreeViewPrivate::checkForPropertyChanges()
+{
+    Q_Q(QQuickTreeView);
 
     if (m_currentModelIndexEmitted != m_currentModelIndex) {
         // m_currentIndex is a QPersistentModelIndex which will update automatically, so
@@ -437,8 +442,22 @@ void QQuickTreeView::keyPressEvent(QKeyEvent *e)
     }
 }
 
+void QQuickTreeView::mousePressEvent(QMouseEvent *e)
+{
+    QQuickTableView::mousePressEvent(e);
+
+    d_func()->m_contentItemPosAtMousePress = contentItem()->position();
+}
+
 void QQuickTreeView::mouseReleaseEvent(QMouseEvent *e)
 {
+    QQuickTableView::mouseReleaseEvent(e);
+
+    if (contentItem()->position() != d_func()->m_contentItemPosAtMousePress) {
+        // content item was flicked, which should cancel setting current index
+        return;
+    }
+
     const int column = columnAtPos(e->pos().x(), true);
     const int row = rowAtPos(e->pos().y(), true);
     if (column == -1 || row == -1)
@@ -452,11 +471,19 @@ void QQuickTreeView::mouseReleaseEvent(QMouseEvent *e)
 
 void QQuickTreeView::mouseDoubleClickEvent(QMouseEvent *e)
 {
+    QQuickTableView::mouseDoubleClickEvent(e);
+
     const int row = rowAtPos(e->pos().y(), true);
     if (row == -1)
         return;
 
     toggleExpanded(row);
+}
+
+void QQuickTreeView::viewportMoved(Qt::Orientations orientation)
+{
+    QQuickTableView::viewportMoved(orientation);
+    d_func()->checkForPropertyChanges();
 }
 
 QQuickTreeViewAttached *QQuickTreeView::qmlAttachedProperties(QObject *obj)

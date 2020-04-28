@@ -29,6 +29,7 @@ public:
     void initItemCallback(int modelIndex, QObject *object);
     void itemReusedCallback(int modelIndex, QObject *object);
 
+    void checkForPropertyChanges();
     void updatePolish() override;
 
 public Q_SLOTS:
@@ -45,6 +46,7 @@ public:
     QModelIndex m_currentModelIndexEmitted;
     QQuickItem *m_currentItemEmitted = nullptr;
     QQuickTreeView::NavigateMode m_navigationMode = QQuickTreeView::Table;
+    QPointF m_contentItemPosAtMousePress;
 };
 
 #endif // QQUICKTREEVIEW_P_H

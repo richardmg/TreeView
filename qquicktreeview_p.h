@@ -62,11 +62,14 @@ public:
     NavigateMode navigationMode() const;
     void setNavigationMode(NavigateMode navigateMode);
 
+    static QQuickTreeViewAttached *qmlAttachedProperties(QObject *obj);
+
+protected:
+    void viewportMoved(Qt::Orientations orientation) override;
     void keyPressEvent(QKeyEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
-
-    static QQuickTreeViewAttached *qmlAttachedProperties(QObject *obj);
 
 signals:
     void currentIndexChanged();
