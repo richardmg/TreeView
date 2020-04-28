@@ -78,21 +78,6 @@ void QQuickTreeViewPrivate::syncModel()
     }
 }
 
-void QQuickTreeViewPrivate::modelUpdated()
-{
-    emitModelChanges();
-}
-
-void QQuickTreeViewPrivate::emitModelChanges()
-{
-    // m_currentIndex is a QPersistentModelIndex which will update automatically, so
-    // we need this extra detour to check if is has changed after a model change.
-    if (m_currentViewIndexEmitted != m_currentViewIndex) {
-        m_currentViewIndexEmitted = m_currentViewIndex;
-        emit q_func()->currentViewIndexChanged();
-    }
-}
-
 QQuickTreeViewAttached *QQuickTreeViewPrivate::getAttachedObject(const QObject *object) const
 {
     QObject *attachedObject = qmlAttachedPropertiesObject<QQuickTreeView>(object);
@@ -122,6 +107,31 @@ void QQuickTreeViewPrivate::itemReusedCallback(int modelIndex, QObject *object)
         const int row = context->contextProperty("row").toInt();
         attached->setIsExpanded(q->isExpanded(row));
         attached->setHasChildren(q->hasChildren(row));
+    }
+}
+
+void QQuickTreeViewPrivate::updatePolish()
+{
+    Q_Q(QQuickTreeView);
+
+    QQuickTableViewPrivate::updatePolish();
+    if (loadRequest.isActive())
+        return;
+
+    if (m_currentViewIndexEmitted != m_currentViewIndex) {
+        // m_currentIndex is a QPersistentModelIndex which will update automatically, so
+        // we need this extra detour to check if is has changed after a model change.
+        m_currentViewIndexEmitted = m_currentViewIndex;
+        emit q->currentViewIndexChanged();
+    }
+
+    QQuickItem *currentItem = q->currentItem();
+    if (m_currentItemEmitted != currentItem) {
+        // Because QQuickTableView shuffles and reuse items, we need to check each time
+        // after a rebuild if currentItem has changed, and not trust that this only changes
+        // when m_currentViewIndex changes.
+        m_currentItemEmitted = currentItem;
+        emit q->currentItemChanged();
     }
 }
 
@@ -162,12 +172,6 @@ QQuickTreeView::QQuickTreeView(QQuickItem *parent)
     // QQuickTableView will only ever see the proxy model
     const auto proxy = QVariant::fromValue(std::addressof(d->m_proxyModel));
     d->QQuickTableViewPrivate::setModelImpl(proxy);
-
-    QObjectPrivate::connect(&d->m_proxyModel, &QAbstractItemModel::rowsInserted, d, &QQuickTreeViewPrivate::modelUpdated);
-    QObjectPrivate::connect(&d->m_proxyModel, &QAbstractItemModel::rowsRemoved, d, &QQuickTreeViewPrivate::modelUpdated);
-    QObjectPrivate::connect(&d->m_proxyModel, &QAbstractItemModel::rowsMoved, d, &QQuickTreeViewPrivate::modelUpdated);
-    QObjectPrivate::connect(&d->m_proxyModel, &QAbstractItemModel::modelReset, d, &QQuickTreeViewPrivate::modelUpdated);
-    QObjectPrivate::connect(&d->m_proxyModel, &QAbstractItemModel::layoutChanged, d, &QQuickTreeViewPrivate::modelUpdated);
 }
 
 QQuickTreeView::~QQuickTreeView()
@@ -343,7 +347,14 @@ void QQuickTreeView::setCurrentViewIndex(const QModelIndex &viewIndex)
 
     d->m_currentViewIndex = viewIndex;
     d->m_currentViewIndexEmitted = viewIndex;
+    d->m_currentItemEmitted = currentItem();
     emit currentViewIndexChanged();
+    emit currentItemChanged();
+}
+
+QQuickItem *QQuickTreeView::currentItem() const
+{
+    return itemAtIndex(currentViewIndex());
 }
 
 QQuickItem *QQuickTreeView::itemAtCell(const QPoint &cell) const

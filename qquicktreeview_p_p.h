@@ -19,8 +19,6 @@ public:
     void setModelImpl(const QVariant &newModel) override;
     void syncModel() override;
 
-    void emitModelChanges();
-
     QQuickItem *itemAtCell(const QPoint &cell) const;
     qreal effectiveRowHeight(int row) const;
     qreal effectiveColumnWidth(int column) const;
@@ -31,8 +29,9 @@ public:
     void initItemCallback(int modelIndex, QObject *object);
     void itemReusedCallback(int modelIndex, QObject *object);
 
+    void updatePolish() override;
+
 public Q_SLOTS:
-    void modelUpdated();
     void modelLayoutChanged(const QList<QPersistentModelIndex> &, QAbstractItemModel::LayoutChangeHint);
 
 public:
@@ -44,6 +43,7 @@ public:
     QVariant m_assignedModel;
     QPersistentModelIndex m_currentViewIndex;
     QModelIndex m_currentViewIndexEmitted;
+    QQuickItem *m_currentItemEmitted = nullptr;
     QQuickTreeView::NavigateMode m_navigationMode = QQuickTreeView::Table;
 };
 
