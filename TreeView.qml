@@ -18,9 +18,9 @@ T.TreeView {
     styleHints.backgroundOdd: "transparent"
     styleHints.foregroundEven: "black"
     styleHints.backgroundEven: "transparent"
-    styleHints.foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
-    styleHints.backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
-    styleHints.overlay: Qt.rgba(0, 0, 0, 0.5)
+    styleHints.foregroundCurrent: navigationMode === TreeView.List ? "white" : "black"
+    styleHints.backgroundCurrent: navigationMode === TreeView.List ? "#005fe5" : "transparent"
+    styleHints.overlay:  navigationMode === TreeView.Table ? Qt.rgba(0, 0, 0, 0.5) : "transparent"
     styleHints.indicator: "black"
 
     function bgColor(column, row) {
