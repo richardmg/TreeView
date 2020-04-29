@@ -12,36 +12,33 @@ T.TreeView {
         just assign a custom delegate directly to your TreeView, or copy this file
         into your project and use it as a starting point for your custom version.
     */
-
+    styleHints.indent: 15
+    styleHints.columnPadding: 20
+    styleHints.foregroundOdd: "black"
+    styleHints.backgroundOdd: "transparent"
+    styleHints.foregroundEven: "black"
+    styleHints.backgroundEven: "transparent"
+    styleHints.foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
+    styleHints.backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
+    styleHints.overlay: Qt.rgba(0, 0, 0, 0.5)
     styleHints.indicator: "black"
-
-    property real indent: 15
-    property real columnPadding: 20
-    property color foregroundOdd: "black"
-    property color backgroundOdd: "transparent"
-    property color foregroundEven: "black"
-    property color backgroundEven: "transparent"
-    property color foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
-    property color backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
-    property color overlay: Qt.rgba(0, 0, 0, 0.5)
-    property color indicator: "black"
 
     function bgColor(column, row) {
         if (currentIndex.row === row)
-            return backgroundCurrent
+            return styleHints.backgroundCurrent
         else if (row % 2)
-            return backgroundOdd
+            return styleHints.backgroundOdd
         else
-            return backgroundEven
+            return styleHints.backgroundEven
     }
 
     function fgColor(column, row) {
         if (currentIndex.row === row)
-            return foregroundCurrent
+            return styleHints.foregroundCurrent
         else if (row % 2)
-            return foregroundOdd
+            return styleHints.foregroundOdd
         else
-            return foregroundEven
+            return styleHints.foregroundEven
     }
 
     delegate: DelegateChooser {
@@ -51,8 +48,8 @@ T.TreeView {
 
             Rectangle {
                 id: treeNode
-                implicitWidth: treeNodeLabel.x + treeNodeLabel.width + (columnPadding / 2)
-                implicitHeight: Math.max(treeNodeIndicator.height, treeNodeLabel.height)
+                implicitWidth: treeNodeLabel.x + treeNodeLabel.width + (styleHints.columnPadding / 2)
+                implicitHeight: Math.max(indicator.height, treeNodeLabel.height)
                 color: bgColor(column, row)
 
                 property bool hasChildren: TreeView.hasChildren
@@ -60,8 +57,8 @@ T.TreeView {
                 property int depth: TreeView.depth
 
                 Text {
-                    id: treeNodeIndicator
-                    x: depth * indent
+                    id: indicator
+                    x: depth * styleHints.indent
                     width: 15
                     color: styleHints.indicator
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
@@ -69,16 +66,16 @@ T.TreeView {
 
                 Text {
                     id: treeNodeLabel
-                    x: treeNodeIndicator.x + indent
+                    x: indicator.x + styleHints.indent
                     clip: true
                     color: fgColor(column, row)
                     text: model.display
                 }
 
                 MouseArea {
-                    x: treeNodeIndicator.x
-                    width: treeNodeIndicator.width
-                    height: treeNodeIndicator.height
+                    x: indicator.x
+                    width: indicator.width
+                    height: indicator.height
                     onClicked: {
                         if (hasChildren)
                             control.toggleExpanded(row)
@@ -92,11 +89,11 @@ T.TreeView {
         DelegateChoice {
             //  The remaining columns after the tree column will use this delegate
             Rectangle {
-                implicitWidth: infoLabel.x + infoLabel.width + (columnPadding / 2)
+                implicitWidth: infoLabel.x + infoLabel.width + (styleHints.columnPadding / 2)
                 color: bgColor(column, row)
                 Text {
                     id: infoLabel
-                    x: columnPadding / 2
+                    x: styleHints.columnPadding / 2
                     color: fgColor(column, row)
                     text: display
                     clip: true
@@ -115,7 +112,7 @@ T.TreeView {
         ShapePath {
             id: path
             fillColor: "transparent"
-            strokeColor: Qt.rgba(0, 0, 0, 0.5)
+            strokeColor: styleHints.overlay
             strokeWidth: 1
             strokeStyle: ShapePath.DashLine
             dashPattern: [1, 2]

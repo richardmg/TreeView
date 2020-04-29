@@ -13,15 +13,43 @@ class QQuickTreeViewStyleHints : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QColor indicator MEMBER m_indicator NOTIFY indicatorChanged);
+    Q_PROPERTY(QColor overlay MEMBER m_overlay NOTIFY overlayChanged);
+    Q_PROPERTY(QColor foregroundOdd MEMBER m_foregroundOdd NOTIFY foregroundOddChanged);
+    Q_PROPERTY(QColor backgroundOdd MEMBER m_backgroundOdd NOTIFY backgroundOddChanged);
+    Q_PROPERTY(QColor foregroundEven MEMBER m_foregroundEven NOTIFY foregroundEvenChanged);
+    Q_PROPERTY(QColor backgroundEven MEMBER m_backgroundEven NOTIFY backgroundEvenChanged);
+    Q_PROPERTY(QColor foregroundCurrent MEMBER m_foregroundCurrent NOTIFY foregroundCurrentChanged);
+    Q_PROPERTY(QColor backgroundCurrent MEMBER m_backgroundCurrent NOTIFY backgroundCurrentChanged);
+    Q_PROPERTY(qreal indent MEMBER m_indent NOTIFY indentChanged);
+    Q_PROPERTY(qreal columnPadding MEMBER m_columnPadding NOTIFY columnPaddingChanged);
 
     QML_NAMED_ELEMENT(TreeViewStyleHints)
+    QML_UNCREATABLE("TreeViewStyleHints is not creatable")
     QML_ADDED_IN_MINOR_VERSION(15)
 
 signals:
     void indicatorChanged();
+    void overlayChanged();
+    void foregroundOddChanged();
+    void backgroundOddChanged();
+    void foregroundEvenChanged();
+    void backgroundEvenChanged();
+    void foregroundCurrentChanged();
+    void backgroundCurrentChanged();
+    void indentChanged();
+    void columnPaddingChanged();
 
 private:
     QColor m_indicator;
+    QColor m_overlay;
+    QColor m_foregroundOdd;
+    QColor m_backgroundOdd;
+    QColor m_foregroundEven;
+    QColor m_backgroundEven;
+    QColor m_foregroundCurrent;
+    QColor m_backgroundCurrent;
+    qreal m_indent = 0;
+    qreal m_columnPadding = 0;
 };
 
 class QQuickTreeView : public QQuickTableView
