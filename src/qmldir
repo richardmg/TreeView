@@ -1,0 +1,5 @@
+module QtQuick.TreeView
+plugin qquicktreeviewplugin
+classname QQuickTreeViewPlugin
+
+TreeView 2.15 TreeView.qml
