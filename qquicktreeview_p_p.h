@@ -47,7 +47,7 @@ public:
     QQuickItem *m_currentItemEmitted = nullptr;
     QQuickTreeView::NavigateMode m_navigationMode = QQuickTreeView::Table;
     QPointF m_contentItemPosAtMousePress;
-    QQuickTreeViewStyleHints *m_styleHints = new QQuickTreeViewStyleHints;
+    QQuickTreeViewStyleHints m_styleHints;
 };
 
 #endif // QQUICKTREEVIEW_P_H
