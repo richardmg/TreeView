@@ -61,14 +61,17 @@ T.TreeView {
                     x: depth * styleHints.indent
                     width: 15
                     color: styleHints.indicator
+                    font: styleHints.font
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Text {
                     id: treeNodeLabel
-                    x: indicator.x + styleHints.indent
+                    x: indicator.x + Math.max(styleHints.indent, indicator.width * 1.5)
                     clip: true
                     color: fgColor(column, row)
+                    font: styleHints.font
                     text: model.display
                 }
 
@@ -95,6 +98,7 @@ T.TreeView {
                     id: infoLabel
                     x: styleHints.columnPadding / 2
                     color: fgColor(column, row)
+                    font: styleHints.font
                     text: display
                     clip: true
                 }

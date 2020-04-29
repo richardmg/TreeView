@@ -45,7 +45,7 @@ public:
     QPersistentModelIndex m_currentModelIndex;
     QModelIndex m_currentModelIndexEmitted;
     QQuickItem *m_currentItemEmitted = nullptr;
-    QQuickTreeView::NavigateMode m_navigationMode = QQuickTreeView::Table;
+    QQuickTreeView::NavigateMode m_navigationMode = QQuickTreeView::List;
     QPointF m_contentItemPosAtMousePress;
     QQuickTreeViewStyleHints m_styleHints;
 };

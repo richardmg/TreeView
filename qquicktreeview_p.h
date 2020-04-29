@@ -22,6 +22,7 @@ class QQuickTreeViewStyleHints : public QObject
     Q_PROPERTY(QColor backgroundCurrent MEMBER m_backgroundCurrent NOTIFY backgroundCurrentChanged);
     Q_PROPERTY(qreal indent MEMBER m_indent NOTIFY indentChanged);
     Q_PROPERTY(qreal columnPadding MEMBER m_columnPadding NOTIFY columnPaddingChanged);
+    Q_PROPERTY(QFont font MEMBER m_font NOTIFY fontChanged);
 
     QML_NAMED_ELEMENT(TreeViewStyleHints)
     QML_UNCREATABLE("TreeViewStyleHints is not creatable")
@@ -38,6 +39,7 @@ signals:
     void backgroundCurrentChanged();
     void indentChanged();
     void columnPaddingChanged();
+    void fontChanged();
 
 private:
     QColor m_indicator;
@@ -50,6 +52,7 @@ private:
     QColor m_backgroundCurrent;
     qreal m_indent = 0;
     qreal m_columnPadding = 0;
+    QFont m_font;
 };
 
 class QQuickTreeView : public QQuickTableView
