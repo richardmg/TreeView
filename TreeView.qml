@@ -7,22 +7,40 @@ import TreeView 2.15 as T
 T.TreeView {
     id: control
 
-    property real indent: 15
-    property real columnPadding: 20
-
     // NB: The following properties are not a part of the TreeView API, and
     // only provided as a quick way to tweak _this_ style/delegate. Rather than
     // customising it from the application, consider just making a copy of
     // it as a starting point for your own custom version.
 
-    property color foregroundColorOddRows: "black"
-    property color backgroundColorOddRows: "transparent"
-    property color foregroundColorEvenRows: "black"
-    property color backgroundColorEvenRows: "transparent"
-    property color foregroundColorCurrent: "black"
-    property color backgroundColorCurrent: "transparent"
-    property color overlayColorCurrent: Qt.rgba(0, 0, 0, 0.5)
-    property color expandedIndicatorColor: "black"
+    property real indent: 15
+    property real columnPadding: 20
+
+    property color foregroundOdd: "black"
+    property color backgroundOdd: "transparent"
+    property color foregroundEven: "black"
+    property color backgroundEven: "transparent"
+    property color foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
+    property color backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
+    property color overlay: Qt.rgba(0, 0, 0, 0.5)
+    property color indicator: "black"
+
+    function bgColor(column, row) {
+        if (currentIndex.row === row)
+            return backgroundCurrent
+        else if (row % 2)
+            return backgroundOdd
+        else
+            return backgroundEven
+    }
+
+    function fgColor(column, row) {
+        if (currentIndex.row === row)
+            return foregroundCurrent
+        else if (row % 2)
+            return foregroundOdd
+        else
+            return foregroundEven
+    }
 
     delegate: DelegateChooser {
         DelegateChoice {
@@ -43,7 +61,7 @@ T.TreeView {
                     id: treeNodeIndicator
                     x: depth * indent
                     width: 15
-                    color: expandedIndicatorColor
+                    color: "black"
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
                 }
 
@@ -90,12 +108,12 @@ T.TreeView {
         id: overlayShape
         z: 10
         property point currentPos: currentItem ? mapToItem(overlayShape, Qt.point(currentItem.x, currentItem.y)) : Qt.point(0, 0)
-        visible: currentItem != null && overlayColorCurrent != "transparent"
+        visible: currentItem != null && navigationMode === TreeView.Table
 
         ShapePath {
             id: path
             fillColor: "transparent"
-            strokeColor: overlayColorCurrent
+            strokeColor: Qt.rgba(0, 0, 0, 0.5)
             strokeWidth: 1
             strokeStyle: ShapePath.DashLine
             dashPattern: [1, 2]
@@ -111,25 +129,4 @@ T.TreeView {
         }
     }
 
-    function bgColor(column, row) {
-        if (navigationMode === TreeView.List && currentIndex.row === row)
-            return backgroundColorCurrent
-        else if (navigationMode === TreeView.Table && currentIndex === viewIndex(column, row))
-            return backgroundColorCurrent
-        else if (row % 2)
-            return backgroundColorOddRows
-        else
-            return backgroundColorEvenRows
-    }
-
-    function fgColor(column, row) {
-        if (navigationMode === TreeView.List && currentIndex.row === row)
-            return foregroundColorCurrent
-        else if (navigationMode === TreeView.Table && currentIndex === viewIndex(column, row))
-            return foregroundColorCurrent
-        else if (row % 2)
-            return foregroundColorOddRows
-        else
-            return foregroundColorEvenRows
-    }
 }
