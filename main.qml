@@ -10,21 +10,44 @@ Window {
     visible: true
     visibility: Window.AutomaticVisibility
 
-    HorizontalHeaderView {
-        id: header
-        syncView: treeView
+    Row {
+        id: controlRow
+        CheckBox {
+            id: configured
+            text: "Configured"
+        }
     }
 
     TreeView {
         id: treeView
-        anchors.top: header.bottom
+        anchors.top: controlRow.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.margins: 20
         model: fileSystemModel
         clip: true
         focus: true
         navigationMode: TreeView.List
+
+        states: State {
+            when: configured.checked
+            PropertyChanges {
+                target: treeView
+                navigationMode: TreeView.Table
+                styleHints.indent: 15
+                styleHints.columnPadding: 20
+                styleHints.font.bold: true
+                styleHints.foregroundOdd: "#001a66"
+                styleHints.backgroundOdd: "#e6ecff"
+                styleHints.foregroundEven: "#001a66"
+                styleHints.backgroundEven: "#ccd9ff"
+                styleHints.foregroundCurrent: "#ebf0fa"
+                styleHints.backgroundCurrent: "#2e5cb8"
+                styleHints.indicator: "#000d33"
+                styleHints.overlay: navigationMode === TreeView.Table ? Qt.rgba(1, 1, 1) : "transparent"
+            }
+        }
 
         Keys.onReturnPressed: {
             var label = model.data(currentModelIndex, treeView.textRole)

@@ -481,6 +481,9 @@ void QQuickTreeView::mouseReleaseEvent(QMouseEvent *e)
 {
     QQuickTableView::mouseReleaseEvent(e);
 
+    // Clicking on a tree transfers focus to it
+    setFocus(true);
+
     if (contentItem()->position() != d_func()->m_contentItemPosAtMousePress) {
         // content item was flicked, which should cancel setting current index
         return;
