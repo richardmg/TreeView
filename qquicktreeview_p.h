@@ -8,6 +8,22 @@ QT_BEGIN_NAMESPACE
 class QQuickTreeViewPrivate;
 class QQuickTreeViewAttached;
 
+class QQuickTreeViewStyleHints : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QColor indicator MEMBER m_indicator NOTIFY indicatorChanged);
+
+    QML_NAMED_ELEMENT(TreeViewStyleHints)
+    QML_ADDED_IN_MINOR_VERSION(15)
+
+signals:
+    void indicatorChanged();
+
+private:
+    QColor m_indicator;
+};
+
 class QQuickTreeView : public QQuickTableView
 {
     Q_OBJECT
@@ -16,6 +32,7 @@ class QQuickTreeView : public QQuickTableView
     Q_PROPERTY(QModelIndex currentModelIndex READ currentModelIndex WRITE setCurrentModelIndex NOTIFY currentModelIndexChanged);
     Q_PROPERTY(QQuickItem *currentItem READ currentItem NOTIFY currentItemChanged);
     Q_PROPERTY(NavigateMode navigationMode READ navigationMode WRITE setNavigationMode NOTIFY navigationModeChanged);
+    Q_PROPERTY(QQuickTreeViewStyleHints *styleHints READ styleHints WRITE setStyleHints NOTIFY styleHintsChanged);
 
     QML_NAMED_ELEMENT(TreeView)
     QML_ADDED_IN_MINOR_VERSION(15)
@@ -62,6 +79,9 @@ public:
     NavigateMode navigationMode() const;
     void setNavigationMode(NavigateMode navigateMode);
 
+    QQuickTreeViewStyleHints *styleHints() const;
+    void setStyleHints(QQuickTreeViewStyleHints *styleHints);
+
     static QQuickTreeViewAttached *qmlAttachedProperties(QObject *obj);
 
 protected:
@@ -78,6 +98,7 @@ signals:
     void collapsed(int row);
     void navigationModeChanged();
     void currentItemChanged();
+    void styleHintsChanged();
 
 private:
     Q_DISABLE_COPY(QQuickTreeView)

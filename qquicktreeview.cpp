@@ -534,6 +534,21 @@ void QQuickTreeView::setNavigationMode(QQuickTreeView::NavigateMode navigateMode
     emit navigationModeChanged();
 }
 
+QQuickTreeViewStyleHints *QQuickTreeView::styleHints() const
+{
+    return d_func()->m_styleHints;
+}
+
+void QQuickTreeView::setStyleHints(QQuickTreeViewStyleHints *styleHints)
+{
+    Q_D(QQuickTreeView);
+    if (d->m_styleHints == styleHints)
+        return;
+
+    d->m_styleHints = styleHints;
+    emit styleHintsChanged();
+}
+
 bool QQuickTreeViewAttached::hasChildren() const
 {
     return m_hasChildren;

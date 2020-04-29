@@ -7,21 +7,24 @@ import TreeView 2.15 as T
 T.TreeView {
     id: control
 
-    property QtObject styleHints: QtObject {
-        // Note: if you need to tweak the style beyond the styleHints, just
-        // copy this file into your project and use it as a starting point
-        // for creating your own custom version.
-        property real indent: 15
-        property real columnPadding: 20
-        property color foregroundOdd: "black"
-        property color backgroundOdd: "transparent"
-        property color foregroundEven: "black"
-        property color backgroundEven: "transparent"
-        property color foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
-        property color backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
-        property color overlay: Qt.rgba(0, 0, 0, 0.5)
-        property color indicator: "black"
-    }
+    /*
+        Note: if you need to tweak this style beyond the styleHints, either
+        just assign a custom delegate directly to your TreeView, or copy this file
+        into your project and use it as a starting point for your custom version.
+    */
+
+    styleHints.indicator: "black"
+
+    property real indent: 15
+    property real columnPadding: 20
+    property color foregroundOdd: "black"
+    property color backgroundOdd: "transparent"
+    property color foregroundEven: "black"
+    property color backgroundEven: "transparent"
+    property color foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
+    property color backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
+    property color overlay: Qt.rgba(0, 0, 0, 0.5)
+    property color indicator: "black"
 
     function bgColor(column, row) {
         if (currentIndex.row === row)
@@ -60,7 +63,7 @@ T.TreeView {
                     id: treeNodeIndicator
                     x: depth * indent
                     width: 15
-                    color: "black"
+                    color: styleHints.indicator
                     text: hasChildren ? (isExpanded ? "▼" : "▶") : ""
                 }
 
