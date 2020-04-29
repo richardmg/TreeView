@@ -7,22 +7,21 @@ import TreeView 2.15 as T
 T.TreeView {
     id: control
 
-    // NB: The following properties are not a part of the TreeView API, and
-    // only provided as a quick way to tweak _this_ style/delegate. Rather than
-    // customising it from the application, consider just making a copy of
-    // it as a starting point for your own custom version.
-
-    property real indent: 15
-    property real columnPadding: 20
-
-    property color foregroundOdd: "black"
-    property color backgroundOdd: "transparent"
-    property color foregroundEven: "black"
-    property color backgroundEven: "transparent"
-    property color foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
-    property color backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
-    property color overlay: Qt.rgba(0, 0, 0, 0.5)
-    property color indicator: "black"
+    property QtObject styleHints: QtObject {
+        // Note: if you need to tweak the style beyond the styleHints, just
+        // copy this file into your project and use it as a starting point
+        // for creating your own custom version.
+        property real indent: 15
+        property real columnPadding: 20
+        property color foregroundOdd: "black"
+        property color backgroundOdd: "transparent"
+        property color foregroundEven: "black"
+        property color backgroundEven: "transparent"
+        property color foregroundCurrent: navigationMode === TreeView.List ? "white" : "transparent"
+        property color backgroundCurrent: navigationMode === TreeView.List ? "#1E8AE9" : "transparent"
+        property color overlay: Qt.rgba(0, 0, 0, 0.5)
+        property color indicator: "black"
+    }
 
     function bgColor(column, row) {
         if (currentIndex.row === row)
@@ -108,7 +107,7 @@ T.TreeView {
         id: overlayShape
         z: 10
         property point currentPos: currentItem ? mapToItem(overlayShape, Qt.point(currentItem.x, currentItem.y)) : Qt.point(0, 0)
-        visible: currentItem != null && navigationMode === TreeView.Table
+        visible: currentItem != null
 
         ShapePath {
             id: path

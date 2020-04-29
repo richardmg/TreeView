@@ -25,6 +25,7 @@ Window {
         clip: true
         focus: true
         navigationMode: TreeView.List
+        styleHints.indicator: "red"
 
         Keys.onReturnPressed: {
             var label = model.data(currentModelIndex, treeView.textRole)
